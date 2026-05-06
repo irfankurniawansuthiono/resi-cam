@@ -44,6 +44,15 @@ export const navItems: NavItem[] = [
         items: [],
     },
     {
+        title: "Pack",
+        url: "/pack",
+        icon: "package",
+        isActive: false,
+        shortcut: ["d", "d"],
+        access: { role: [role.admin] },
+        items: [],
+    },
+    {
         title: "Manage",
         url: "#", // Placeholder as there is no direct link for the parent
         icon: "settings2",
@@ -61,7 +70,26 @@ export const navItems: NavItem[] = [
                     role: [role.admin],
                 },
             },
+            {
+                title: "Cameras",
+                url: "/admin/cameras",
+                icon: "camera",
+                isActive: false,
+                items: [],
+                shortcut: ["u", "u"],
+                access: {
+                    role: [role.admin],
+                },
+            },
         ],
+    },
+    {
+        title: "Settings",
+        url: "/admin/settings",
+        icon: "settings",
+        isActive: false,
+        items: [],
+        access: { role: [role.admin] },
     },
 
     // {

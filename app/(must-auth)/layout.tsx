@@ -9,9 +9,9 @@ type AdminLayoutProps = {
 
 export default async function AdminLayoutWrapper({ children }: AdminLayoutProps) {
     const session = await getSession();
-    const isAdminOrSuperAdmin = session?.user.role === role.admin;
+    const isAdmin = session?.user.role === role.admin;
 
-    if (!isAdminOrSuperAdmin) redirect("/");
+    if (!isAdmin) redirect("/");
 
     return <AdminLayout>{children}</AdminLayout>;
 }

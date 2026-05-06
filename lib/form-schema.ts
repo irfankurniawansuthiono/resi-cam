@@ -85,11 +85,32 @@ export const addUserSchema = registerSchema.extend({
     role: roleEnum,
 });
 
+// Camera
+
+export const CameraType = z.enum(["WEBCAM", "IPCAM"]);
+
+export const addCameraSchema = z
+    .object({
+        name: z.string().min(2, "Name must be at least 2 characters"),
+        url: z.string().url("Invalid URL"),
+        type: CameraType,
+    })
+    .superRefine((data, ctx) => {
+        const isValidProtocol =
+            data.url.startsWith("http://") || data.url.startsWith("https://") || data.url.startsWith("rtsp://");
+        if (!isValidProtocol) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "URL must start with http://, https://, or rtsp://",
+                path: ["url"],
+            });
+        }
+    });
+
 // Type auth form
 export type LoginFormValues = z.infer<typeof loginSchema>;
-export type RegisterFormValues = z.infer<typeof registerSchema>;
-export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
-export type ResetPasswordAdminFormValues = z.infer<typeof resetPasswordAdminSchema>;
-export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 // Type user form
 export type AddUserFormValues = z.infer<typeof addUserSchema>;
+
+// Type Camera form
+export type AddCameraFormValues = z.infer<typeof addCameraSchema>;
