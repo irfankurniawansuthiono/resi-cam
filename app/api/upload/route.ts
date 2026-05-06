@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     const session = await getSession();
     const userRole = session?.user.role;
 
-    if (userRole !== role.superadmin && userRole !== role.admin) {
+    if (userRole !== role.admin) {
         return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
