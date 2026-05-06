@@ -33,7 +33,8 @@ import { useFilteredNavItems } from "@/hooks/use-nav";
 import { SignoutButton } from "@/modules/admin/ui/components/signout-button";
 import { navItems } from "@/modules/admin/ui/config/nav-config";
 import gsap from "gsap";
-import { ChevronRight, ChevronsDown, Command, UserCircle } from "lucide-react";
+import { ChevronRight, ChevronsDown, UserCircle } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
@@ -84,45 +85,29 @@ const SidebarLogo = () => {
     return (
         <SidebarMenu>
             <SidebarMenuItem>
-                <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-                    <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton
-                            size="lg"
-                            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                        >
-                            <div
-                                ref={logoRef}
-                                className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground"
-                            >
-                                <Command className="size-4" />
-                            </div>
-                            <div
-                                ref={textRef}
-                                className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden"
-                            >
-                                <span className="truncate font-semibold uppercase tracking-wider">Portfolio</span>
-                                <span className="truncate text-xs text-muted-foreground">Candra Wali</span>
-                            </div>
-                            <div ref={chevronRef}>
-                                <ChevronsDown className="ml-auto size-4" />
-                            </div>
-                        </SidebarMenuButton>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-                        align="start"
-                        side="bottom"
-                        sideOffset={4}
+                <SidebarMenuButton
+                    size="lg"
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                >
+                    <div
+                        ref={logoRef}
+                        className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground"
                     >
-                        <DropdownMenuLabel className="text-xs text-muted-foreground">Teams</DropdownMenuLabel>
-                        <DropdownMenuItem className="gap-2 p-2">
-                            <div className="flex size-6 items-center justify-center rounded-sm border">
-                                <Command className="size-4" />
-                            </div>
-                            Portfolio
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                        <Image
+                            src="/img/logo/resi-cam-transparent-logo.png"
+                            alt="Resi-Cam Logo"
+                            width={32}
+                            height={32}
+                        />
+                    </div>
+                    <div
+                        ref={textRef}
+                        className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden"
+                    >
+                        <span className="truncate font-semibold uppercase tracking-wider">Resi-Cam</span>
+                        <span className="truncate text-xs text-muted-foreground">bukti packing setiap pesanan</span>
+                    </div>
+                </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>
     );

@@ -30,6 +30,7 @@ model User {
   banned     Boolean?  @default(false)
   banReason  String?
   banExpires DateTime?
+  records    Record[]
 
   @@map("user")
 }
@@ -106,4 +107,17 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Record {
+  id          String   @id @default(cuid())
+  barcodeResi String
+  videoPath   String
+  recordedAt  DateTime @default(now())
+
+  recordedById String?
+  recordedBy   User?   @relation(fields: [recordedById], references: [id])
+
+  @@index([barcodeResi])
+  @@index([recordedAt])
 }

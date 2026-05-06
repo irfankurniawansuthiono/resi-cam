@@ -61,20 +61,6 @@ export const auth = betterAuth({
                 window: 60,
                 max: 5, // 5 attempts per minute
             },
-            // Stricter limit for sign-up (spam protection)
-            "/register/*": {
-                window: 60,
-                max: 3, // 3 attempts per minute
-            },
-            // Stricter limit for password reset
-            "/forgot-password": {
-                window: 60,
-                max: 3,
-            },
-            "/reset-password": {
-                window: 60,
-                max: 3,
-            },
         },
         storage: "memory", // Use in-memory storage (for single instance)
     },
