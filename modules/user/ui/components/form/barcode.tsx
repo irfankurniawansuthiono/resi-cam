@@ -51,7 +51,7 @@ export default function BarcodeField({
         );
 
         form.reset({ barcode: "" });
-    }, [debounce, onStartRecording, onStopRecording, setRecordingStatus, form.reset, form]);
+    }, [debounce, onStartRecording, onStopRecording, setRecordingStatus, form.reset, form, setBarcode]);
     return (
         <div className="flex items-center justify-end w-full gap-2">
             <Form {...form}>

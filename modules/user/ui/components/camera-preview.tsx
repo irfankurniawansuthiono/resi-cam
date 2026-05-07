@@ -4,7 +4,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import axios from "axios";
 import { AlertTriangleIcon, Disc2, StopCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-/* eslint-disable @typescript-eslint/no-explicit-any */
 type CameraStatus = "idle" | "loading" | "active" | "error";
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -35,7 +34,6 @@ export default function CameraPreview({
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
     const [status, setStatus] = useState<CameraStatus>("idle");
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [errorMsg, setErrorMsg] = useState("");
     const uploadingRef = useRef(false);
     function stopStream() {
@@ -150,10 +148,6 @@ export default function CameraPreview({
                 };
 
                 recorder.onstop = async () => {
-                    const blob = new Blob(chunksRef.current, { type: "video/webm" });
-                    const url = URL.createObjectURL(blob);
-
-                    setPreviewUrl(url);
                     try {
                         const res = await axios.post("/api/complete-upload", {
                             sessionId,
