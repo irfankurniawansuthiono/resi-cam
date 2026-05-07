@@ -109,11 +109,18 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+enum Status {
+  recording
+  processing
+  done
+  failed
+}
 
 model Record {
   id          String   @id @default(cuid())
-  barcodeResi String
+  barcodeResi String  @unique
   videoPath   String
+  status      Status
   cameraId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -129,7 +136,7 @@ model Camera {
   id        String     @id @default(cuid())
   userId    String
   name      String     @unique // "Kamera Meja 1", "IP Cam Gudang"
-  url       String     @unique // null kalau webcam, rtsp://... atau http://... kalau IP cam
+  url       String     @unique // null kalau webcam, rtsp://... atau http://... kalau IP cam atau webcam:user-id untuk webcam
   isActive  Boolean    @default(false)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt

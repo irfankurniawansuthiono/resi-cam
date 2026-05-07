@@ -1,8 +1,10 @@
 import { appToast } from "@/components/custom/app-toast";
 import { ButtonWithIcon } from "@/components/custom/button-with-icon";
-import { Disc2, StopCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import axios from "axios";
+import { AlertTriangleIcon, Disc2, StopCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type CameraStatus = "idle" | "loading" | "active" | "error";
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -10,16 +12,22 @@ const ERROR_MESSAGES: Record<string, string> = {
     NotFoundError: "No camera found on this device.",
     NotReadableError: "Camera is already in use by another application.",
 };
-
+type UploadChunk = {
+    blob: Blob;
+    index: number;
+    sessionId: string;
+};
 export default function CameraPreview({
     camera,
     recordingStatus,
     recordingTimer,
+    barcode,
     onStopRecording,
 }: {
     camera: { id: string; url: string };
     recordingStatus: "idle" | "recording";
     recordingTimer: number;
+    barcode: string;
     onStopRecording: () => void;
 }) {
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -29,11 +37,26 @@ export default function CameraPreview({
     const [status, setStatus] = useState<CameraStatus>("idle");
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [errorMsg, setErrorMsg] = useState("");
-
+    const uploadingRef = useRef(false);
     function stopStream() {
         streamRef.current?.getTracks().forEach(t => t.stop());
         streamRef.current = null;
         if (videoRef.current) videoRef.current.srcObject = null;
+    }
+
+    async function uploadChunk(chunk: UploadChunk) {
+        const formData = new FormData();
+        formData.append("file", chunk.blob);
+        formData.append("index", String(chunk.index));
+        formData.append("sessionId", chunk.sessionId);
+
+        try {
+            await axios.post("/api/upload-chunk", formData, {
+                timeout: 10000,
+            });
+        } catch (err) {
+            throw err;
+        }
     }
 
     useEffect(() => {
@@ -81,32 +104,74 @@ export default function CameraPreview({
     useEffect(() => {
         function startRecording() {
             if (!streamRef.current) return;
-
-            chunksRef.current = [];
-
             if (camera.id === "webcam") {
+                let sessionId = "";
+                let chunkIndex = 0;
+
+                async function processQueue() {
+                    if (uploadingRef.current) return;
+                    uploadingRef.current = true;
+
+                    while (queue.length > 0) {
+                        const chunk = queue.shift();
+
+                        if (!chunk) continue; // guard
+
+                        try {
+                            await uploadChunk(chunk);
+                        } catch {
+                            queue.unshift(chunk);
+                            break;
+                        }
+                    }
+
+                    uploadingRef.current = false;
+                }
+
+                sessionId = crypto.randomUUID();
+                chunkIndex = 0;
                 const recorder = new MediaRecorder(streamRef.current, {
-                    mimeType: "video/webm; codecs=vp9",
+                    mimeType: "video/webm; codecs=vp8",
                 });
+
+                const queue: UploadChunk[] = [];
 
                 recorder.ondataavailable = e => {
                     if (e.data.size > 0) {
                         chunksRef.current.push(e.data);
+                        queue.push({
+                            blob: e.data,
+                            index: chunkIndex++,
+                            sessionId,
+                        });
+
+                        processQueue();
                     }
                 };
 
-                recorder.onstop = () => {
+                recorder.onstop = async () => {
                     const blob = new Blob(chunksRef.current, { type: "video/webm" });
-
-                    // ex: preview / download
                     const url = URL.createObjectURL(blob);
 
                     setPreviewUrl(url);
-
-                    // upload backend logic here
+                    try {
+                        const res = await axios.post("/api/complete-upload", {
+                            sessionId,
+                            barcode,
+                        });
+                        console.log("Merge success:", res.data);
+                    } catch (err) {
+                        if (axios.isAxiosError(err) && err.response?.status === 422) {
+                            appToast.error("Video is too short. Minimum 10 seconds.");
+                        } else {
+                            // Optional: update DB statusto failed if merge failed
+                            console.error("Merge failed:", err);
+                            appToast.error("Failed to merge chunks.");
+                        }
+                    }
                 };
 
-                recorder.start();
+                recorder.start(2000);
                 mediaRecorderRef.current = recorder;
             }
         }
@@ -125,7 +190,7 @@ export default function CameraPreview({
         if (recordingStatus === "idle") {
             stopRecordingInternal();
         }
-    }, [recordingStatus, camera.id]);
+    }, [recordingStatus, camera.id, barcode]);
     useEffect(() => {
         return () => {
             if (mediaRecorderRef.current?.state !== "inactive") {
@@ -138,7 +203,7 @@ export default function CameraPreview({
             <div className="relative w-full aspect-video  bg-muted rounded-lg overflow-hidden">
                 {/* Video */}
                 {recordingStatus === "recording" && (
-                    <div className="absolute flex items-center gap-2 z-100 top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-md text-sm">
+                    <div className="absolute flex items-center gap-2 z-2 top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-md text-sm">
                         <Disc2 size={16} /> REC {Math.floor(recordingTimer / 60)}:
                         {(recordingTimer % 60).toString().padStart(2, "0")}
                     </div>
@@ -147,7 +212,7 @@ export default function CameraPreview({
                     ref={videoRef}
                     autoPlay
                     playsInline
-                    className={`absolute inset-0 w-full h-full object-cover ${status === "active" ? "block" : "hidden"}`}
+                    className={`absolute inset-0  w-full h-full object-cover ${status === "active" ? "block" : "hidden"}`}
                 />
 
                 {/* Fallback */}
@@ -205,9 +270,20 @@ export default function CameraPreview({
                 )}
             </div>
             <div className="w-full flex items-start justify-between">
-                <p className="text-sm italic text-muted-foreground">
-                    Notes: Camera will be auto stopped after 15 minutes of inactivity
-                </p>
+                <Alert className="max-w-fit border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-50">
+                    <AlertTriangleIcon />
+                    <AlertTitle>Recording Instructions</AlertTitle>
+                    <AlertDescription>
+                        <ul className="list-disc pl-5">
+                            <li>
+                                Minimum duration is <b>10 seconds</b>
+                            </li>
+                            <li>
+                                Recording will be auto stopped after <b>15 minutes </b>of <b>inactivity</b>
+                            </li>
+                        </ul>
+                    </AlertDescription>
+                </Alert>
                 <ButtonWithIcon
                     onClick={() => onStopRecording()}
                     startIcon={<StopCircle />}
@@ -217,8 +293,6 @@ export default function CameraPreview({
                     Stop Recording
                 </ButtonWithIcon>
             </div>
-            {/* preview blob */}
-            {previewUrl && <video src={previewUrl} autoPlay controls />}
         </div>
     );
 }

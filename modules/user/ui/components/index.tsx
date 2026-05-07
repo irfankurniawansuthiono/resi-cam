@@ -17,6 +17,7 @@ export default function PackRootComponents() {
 
     const stopRecording = () => {
         setRecordingStatus("idle");
+        setRecordingTimer(0);
     };
     useEffect(() => {
         if (recordingStatus !== "recording") return;
@@ -32,6 +33,7 @@ export default function PackRootComponents() {
             <div className="flex items-center justify-between">
                 <CameraSelect setCamera={setCamera} camera={camera} />
                 <BarcodeField
+                    setBarcode={setBarcode}
                     camera={camera}
                     recordingStatus={recordingStatus}
                     setRecordingStatus={setRecordingStatus}
@@ -40,6 +42,7 @@ export default function PackRootComponents() {
                 />
             </div>
             <CameraPreview
+                barcode={barcode}
                 camera={camera}
                 recordingStatus={recordingStatus}
                 recordingTimer={recordingTimer}

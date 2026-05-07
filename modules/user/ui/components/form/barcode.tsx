@@ -11,12 +11,14 @@ export default function BarcodeField({
     setRecordingStatus,
     onStartRecording,
     onStopRecording,
+    setBarcode,
 }: {
     camera: { id: string; url: string };
     recordingStatus: "idle" | "recording";
     setRecordingStatus: (status: "idle" | "recording") => void;
     onStartRecording: () => void;
     onStopRecording: () => void;
+    setBarcode: (barcode: string) => void;
 }) {
     const form = useForm({
         mode: "onChange",
@@ -33,6 +35,7 @@ export default function BarcodeField({
         // check valid form
         if (!form.formState.isValid) return;
         if (!debounce || debounce.trim() === "") return;
+        setBarcode(debounce);
 
         onStopRecording();
         setTimeout(() => setRecordingStatus("recording"), 300);
