@@ -1,5 +1,6 @@
 import PageContainer from "@/components/custom/page-container";
 import AddCameras from "@/modules/admin/ui/components/cameras/button/add-cameras";
+import CamerasDataTable from "@/modules/admin/ui/components/cameras/cameras-data-table";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 export default function CamerasPage() {
     return (
         <PageContainer pageTitle="Cameras" pageDescription="Manage cameras here" pageHeaderAction={<AddCameras />}>
-            Cameras
+            <CamerasDataTable />
         </PageContainer>
     );
 }

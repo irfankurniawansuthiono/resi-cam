@@ -1,4 +1,5 @@
 import PageContainer from "@/components/custom/page-container";
+import PackRootComponents from "@/modules/user/ui/components";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,8 +10,8 @@ export const metadata: Metadata = {
 
 export default function PackPage() {
     return (
-        <PageContainer pageTitle="Pack" pageDescription="Start packing and capture proof for every order">
-            Pack
+        <PageContainer pageTitle="" pageDescription="">
+            <PackRootComponents />
         </PageContainer>
     );
 }

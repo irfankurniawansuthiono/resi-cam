@@ -128,9 +128,8 @@ model Record {
 model Camera {
   id        String     @id @default(cuid())
   userId    String
-  name      String // "Kamera Meja 1", "IP Cam Gudang"
-  type      CameraType // WEBCAM | IPCAM
-  url       String? // null kalau webcam, rtsp://... atau http://... kalau IP cam
+  name      String     @unique // "Kamera Meja 1", "IP Cam Gudang"
+  url       String     @unique // null kalau webcam, rtsp://... atau http://... kalau IP cam
   isActive  Boolean    @default(false)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -138,9 +137,4 @@ model Camera {
   records Record[]
 
   user User @relation(fields: [userId], references: [id])
-}
-
-enum CameraType {
-  WEBCAM
-  IPCAM
 }

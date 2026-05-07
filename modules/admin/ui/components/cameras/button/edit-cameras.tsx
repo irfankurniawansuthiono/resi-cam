@@ -16,56 +16,70 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { addCameraSchema, type AddCameraFormValues } from "@/lib/form-schema";
+import { editCameraSchema, type EditCameraFormValues } from "@/lib/form-schema";
 import { useTRPC } from "@/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link, Plus, Webcam } from "lucide-react";
+import { Link, Pencil, Webcam } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-export default function AddCameras() {
+export default function EditCamera({
+    data,
+}: {
+    data: {
+        id: string;
+        url: string;
+        name: string;
+    };
+}) {
     const [error, setError] = useState<string | undefined>(undefined);
     const [dialogOpen, setDialogOpen] = useState(false);
     const queryClient = useQueryClient();
-    const form = useForm<AddCameraFormValues>({
-        resolver: zodResolver(addCameraSchema),
+    const form = useForm<EditCameraFormValues>({
+        resolver: zodResolver(editCameraSchema),
         mode: "onSubmit",
         shouldFocusError: true,
         defaultValues: {
-            name: "",
-            url: "",
+            id: data.id,
+            name: data.name,
+            url: data.url,
         },
     });
     const trpc = useTRPC();
-    const createCameraMutation = useMutation(
-        trpc.camera.create.mutationOptions({
-            onSuccess: () => {
+    const editCameraMutation = useMutation(
+        trpc.camera.edit.mutationOptions({
+            onSuccess: data => {
                 queryClient.invalidateQueries(trpc.camera.get.queryFilter());
-                form.reset();
+                form.reset({
+                    name: data.name,
+                    url: data.url,
+                    id: data.id,
+                });
                 setDialogOpen(false);
                 setError(undefined);
-                appToast.success("Camera created successfully!");
+                appToast.success("Camera added successfully!");
             },
             onError: err => {
                 setError(err.message);
                 console.debug(err);
-                appToast.error(err.message);
+                appToast.error("Something went wrong!");
             },
         }),
     );
-    const onSubmit = async (data: AddCameraFormValues) => {
+    const onSubmit = async (data: EditCameraFormValues) => {
         setError(undefined);
-        createCameraMutation.mutate({
+        editCameraMutation.mutate({
             name: data.name,
             url: data.url,
+            id: data.id,
         });
     };
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-                <ButtonWithIcon startIcon={<Plus />} variant="default">
-                    Add New Camera
-                </ButtonWithIcon>
+                <Button variant="outline">
+                    <Pencil size={15} color="orange" />
+                </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-sm">
                 <Form {...form}>
@@ -95,7 +109,7 @@ export default function AddCameras() {
                                         <Input
                                             placeholder="Enter camera name"
                                             {...field}
-                                            disabled={createCameraMutation.isPending}
+                                            disabled={editCameraMutation.isPending}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -117,7 +131,7 @@ export default function AddCameras() {
                                         <Input
                                             placeholder="Enter camera URL (RTSP/HTTP)"
                                             {...field}
-                                            disabled={createCameraMutation.isPending}
+                                            disabled={editCameraMutation.isPending}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -132,15 +146,15 @@ export default function AddCameras() {
                             </DialogClose>
                             <ButtonWithIcon
                                 type="submit"
-                                startIcon={createCameraMutation.isPending ? <Spinner /> : <Plus />}
+                                startIcon={editCameraMutation.isPending ? <Spinner /> : <Pencil />}
                                 className={`${
-                                    createCameraMutation.isPending || !form.formState.isValid
+                                    editCameraMutation.isPending || !form.formState.isValid
                                         ? "cursor-not-allowed pointer-events-none"
                                         : ""
                                 }`}
-                                disabled={createCameraMutation.isPending || !form.formState.isValid}
+                                disabled={editCameraMutation.isPending || !form.formState.isValid}
                             >
-                                {createCameraMutation.isPending ? "Adding..." : "Add Camera"}
+                                {editCameraMutation.isPending ? "Editing..." : "Edit Camera"}
                             </ButtonWithIcon>
                         </DialogFooter>
                     </form>

@@ -7,3 +7,7 @@ export const getCameraSchema = z.object({
     sortBy: z.enum(["name", "createdAt", "updatedAt"]).default("updatedAt").optional(),
     sortDirection: z.enum(["asc", "desc"]).optional(),
 });
+
+export const deleteCameraSchema = z.object({
+    id: z.string(),
+});

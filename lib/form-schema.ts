@@ -92,8 +92,7 @@ export const CameraType = z.enum(["WEBCAM", "IPCAM"]);
 export const addCameraSchema = z
     .object({
         name: z.string().min(2, "Name must be at least 2 characters"),
-        url: z.string().url("Invalid URL"),
-        type: CameraType,
+        url: z.string(),
     })
     .superRefine((data, ctx) => {
         const isValidProtocol =
@@ -107,6 +106,21 @@ export const addCameraSchema = z
         }
     });
 
+export const editCameraSchema = addCameraSchema.extend({
+    id: z.string(),
+});
+
+// barcode
+export const barcodeSchema = z.object({
+    barcode: z.string().min(8, "Barcode must be at least 8 characters"),
+});
+
+export const addRecordSchema = z.object({
+    barcode: z.string(),
+    cameraId: z.string(),
+    videoPath: z.string(),
+});
+export type AddCameraSchema = z.infer<typeof addCameraSchema>;
 // Type auth form
 export type LoginFormValues = z.infer<typeof loginSchema>;
 // Type user form
@@ -114,3 +128,5 @@ export type AddUserFormValues = z.infer<typeof addUserSchema>;
 
 // Type Camera form
 export type AddCameraFormValues = z.infer<typeof addCameraSchema>;
+
+export type EditCameraFormValues = z.infer<typeof editCameraSchema>;
