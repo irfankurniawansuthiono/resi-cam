@@ -133,6 +133,7 @@ export const addRecordSchema = z.object({
 export type AddCameraSchema = z.infer<typeof addCameraSchema>;
 // Type auth form
 export type LoginFormValues = z.infer<typeof loginSchema>;
+export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
 // Type user form
 export type AddUserFormValues = z.infer<typeof addUserSchema>;
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { version } from "@/app/config/config";
 import { Icons } from "@/components/custom/icons";
 import { UserAvatarProfile } from "@/components/custom/user-avatar-profile";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -105,7 +106,7 @@ const SidebarLogo = () => {
                         className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden"
                     >
                         <span className="truncate font-semibold uppercase tracking-wider">Resi-Cam</span>
-                        <span className="truncate text-xs text-muted-foreground">V1.2.10</span>
+                        <span className="truncate text-xs text-muted-foreground">V{version}</span>
                     </div>
                 </SidebarMenuButton>
             </SidebarMenuItem>

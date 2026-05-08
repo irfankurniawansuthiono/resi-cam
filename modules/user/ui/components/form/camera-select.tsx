@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { ButtonWithIcon } from "@/components/custom/button-with-icon";
 import { Form, FormLabel } from "@/components/ui/form";

@@ -3,7 +3,7 @@ import { getContentType } from "@/utils/getContentType";
 import { readFile } from "fs/promises";
 import path from "path";
 
-export async function GET(req: Request, { params }: { params: Promise<{ pathName: string }> }) {
+export async function GET(req: Request, { params }: { params: Promise<{ pathName: string[] }> }) {
     const { pathName } = await params;
 
     try {

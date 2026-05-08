@@ -55,6 +55,8 @@ export default function BarcodeField({
             },
         }),
     );
+    // Ambil mutate function sekali
+    const { mutate: checkBarcode } = checkRecordingMutation;
     useEffect(() => {
         // check valid form
         if (!form.formState.isValid) return;
@@ -62,7 +64,7 @@ export default function BarcodeField({
         setBarcode(debounce);
 
         onStopRecording();
-        checkRecordingMutation.mutate({ barcode: debounce });
+        checkBarcode({ barcode: debounce });
 
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
@@ -81,15 +83,14 @@ export default function BarcodeField({
         form.reset({ barcode: "" });
     }, [
         debounce,
+        form.formState.isValid,
+        checkBarcode,
+        setRecordingStatus,
         onStartRecording,
         onStopRecording,
-        checkRecordingMutation,
-        setRecordingStatus,
-        form.reset,
-        form,
-        setBarcode,
         setSystemLogs,
-        recordingStatus,
+        setBarcode,
+        form,
     ]);
     return (
         <div className="flex items-center justify-end w-full gap-2">

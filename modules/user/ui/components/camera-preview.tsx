@@ -43,29 +43,6 @@ export default function CameraPreview({
     const hasStartedRecordingRef = useRef(false);
     const [errorMsg, setErrorMsg] = useState("");
     const trpc = useTRPC();
-    const checkRecordingMutation = useMutation(
-        trpc.record.check.mutationOptions({
-            onSuccess: () => {
-                setSystemLogs(prev => [
-                    ...prev,
-                    {
-                        message: "Checking barcode in database...",
-                        status: "info",
-                    },
-                ]);
-            },
-            onError: error => {
-                appToast.error(error.message);
-                setSystemLogs(prev => [
-                    ...prev,
-                    {
-                        message: "Failed to check barcode in database...\n" + error.message,
-                        status: "error",
-                    },
-                ]);
-            },
-        }),
-    );
 
     const createRecordingMutation = useMutation(
         trpc.record.create.mutationOptions({
@@ -270,7 +247,6 @@ export default function CameraPreview({
                 appToast.error("Barcode is required");
                 return;
             }
-            checkRecordingMutation.mutate({ barcode });
 
             hasStartedRecordingRef.current = true;
 
@@ -306,7 +282,7 @@ export default function CameraPreview({
         if (recordingStatus === "idle") {
             stopRecordingInternal();
         }
-    }, [recordingStatus, camera, setSystemLogs, barcode, createWCSMutation, uploadChunk, checkRecordingMutation]);
+    }, [recordingStatus, camera, setSystemLogs, barcode, createWCSMutation, uploadChunk]);
 
     useEffect(() => {
         return () => {
