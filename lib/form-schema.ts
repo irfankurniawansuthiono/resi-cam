@@ -1,3 +1,4 @@
+import { SourceType, Status } from "@/app/generated/prisma";
 import { roleList } from "@/modules/admin/ui/config/auth/role.user";
 import { z } from "zod";
 
@@ -115,11 +116,20 @@ export const barcodeSchema = z.object({
     barcode: z.string().min(8, "Barcode must be at least 8 characters"),
 });
 
-export const addRecordSchema = z.object({
-    barcode: z.string(),
-    cameraId: z.string(),
-    videoPath: z.string(),
+export const addWebCameraSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    url: z.string(),
+    id: z.string(),
 });
+export const addRecordSchema = z.object({
+    barcodeResi: z.string().min(1, "Barcode tidak boleh kosong"),
+    videoPath: z.string().min(1, "Video path wajib diisi"),
+    status: z.enum(Status),
+    sourceType: z.enum(SourceType),
+    cameraId: z.string().optional(),
+    webCameraSessionId: z.string().optional(),
+});
+
 export type AddCameraSchema = z.infer<typeof addCameraSchema>;
 // Type auth form
 export type LoginFormValues = z.infer<typeof loginSchema>;

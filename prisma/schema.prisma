@@ -26,12 +26,13 @@ model User {
   credentials Credential[]
   sessions    Session[]
 
-  role       String?
-  banned     Boolean?  @default(false)
-  banReason  String?
-  banExpires DateTime?
-  records    Record[]
-  cameras    Camera[]
+  role              String?
+  banned            Boolean?           @default(false)
+  banReason         String?
+  banExpires        DateTime?
+  records           Record[]
+  cameras           Camera[]
+  webCameraSessions WebCameraSession[]
 
   @@map("user")
 }
@@ -109,39 +110,63 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
 enum Status {
   recording
   processing
   done
   failed
 }
-
+enum SourceType {
+  CAMERA
+  WEBCAM
+}
 model Record {
-  id          String   @id @default(cuid())
-  barcodeResi String  @unique
-  videoPath   String
-  status      Status
-  cameraId    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  recordedById String?
+  id                 String   @id @default(cuid())
+  barcodeResi        String   @unique
+  videoPath          String
+  status             Status
+  cameraId           String?
+  webCameraSessionId String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  recordedById       String?
+  sourceType         SourceType
 
-  recordedBy User?  @relation(fields: [recordedById], references: [id])
-  camera     Camera @relation(fields: [cameraId], references: [id])
+  recordedBy       User?             @relation(fields: [recordedById], references: [id])
+  camera           Camera?           @relation(fields: [cameraId], references: [id])
+  webCameraSession WebCameraSession? @relation(fields: [webCameraSessionId], references: [id])
 
   @@index([barcodeResi])
+  @@map("record")
 }
 
 model Camera {
-  id        String     @id @default(cuid())
+  id        String   @id @default(cuid())
   userId    String
-  name      String     @unique // "Kamera Meja 1", "IP Cam Gudang"
-  url       String     @unique // null kalau webcam, rtsp://... atau http://... kalau IP cam atau webcam:user-id untuk webcam
-  isActive  Boolean    @default(false)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-
+  name      String   @unique // "Kamera Meja 1", "IP Cam Gudang"
+  url       String   @unique // null kalau webcam, rtsp://... atau http://... kalau IP cam atau webcam:user-id untuk webcam
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
   records Record[]
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model WebCameraSession {
+  id String @id @default(cuid())
+
+  userId String
+
+  deviceId String?
+  name     String?
+  url      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id])
+  records Record[]
 }

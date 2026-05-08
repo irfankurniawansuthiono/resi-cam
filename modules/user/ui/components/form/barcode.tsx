@@ -1,23 +1,30 @@
+import { appToast } from "@/components/custom/app-toast";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/use-debounce";
 import { barcodeSchema } from "@/lib/form-schema";
+import { useTRPC } from "@/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
+import type { SystemLog } from "..";
 
 export default function BarcodeField({
     camera,
     setRecordingStatus,
+    recordingStatus,
     onStartRecording,
     onStopRecording,
     setBarcode,
+    setSystemLogs,
 }: {
     camera: { id: string; url: string };
     recordingStatus: "idle" | "recording";
     setRecordingStatus: (status: "idle" | "recording") => void;
     onStartRecording: () => void;
     onStopRecording: () => void;
+    setSystemLogs: React.Dispatch<React.SetStateAction<SystemLog[]>>;
     setBarcode: (barcode: string) => void;
 }) {
     const form = useForm({
@@ -25,12 +32,29 @@ export default function BarcodeField({
         defaultValues: { barcode: "" },
         resolver: zodResolver(barcodeSchema),
     });
+    const trpc = useTRPC();
 
     const barcode = useWatch({ control: form.control, name: "barcode" });
     const debounce = useDebounce(barcode, 500);
 
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
+    const checkRecordingMutation = useMutation(
+        trpc.record.check.mutationOptions({
+            onSuccess: () => {
+                setTimeout(() => setRecordingStatus("recording"), 300);
+            },
+            onError: error => {
+                appToast.error(error.message);
+                setSystemLogs(prev => [
+                    ...prev,
+                    {
+                        message: "Failed to check barcode in database...\n" + error.message,
+                        status: "error",
+                    },
+                ]);
+            },
+        }),
+    );
     useEffect(() => {
         // check valid form
         if (!form.formState.isValid) return;
@@ -38,7 +62,7 @@ export default function BarcodeField({
         setBarcode(debounce);
 
         onStopRecording();
-        setTimeout(() => setRecordingStatus("recording"), 300);
+        checkRecordingMutation.mutate({ barcode: debounce });
 
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
@@ -46,12 +70,27 @@ export default function BarcodeField({
             () => {
                 onStopRecording();
                 setRecordingStatus("idle");
+                // jika timeout set logs bahwa memaksa stop recording
+                setSystemLogs(prev => [
+                    ...prev,
+                    { status: "info", message: "Force stop recording due to max duration 15 minutes reached" },
+                ]);
             },
             15 * 60 * 1000,
         );
-
         form.reset({ barcode: "" });
-    }, [debounce, onStartRecording, onStopRecording, setRecordingStatus, form.reset, form, setBarcode]);
+    }, [
+        debounce,
+        onStartRecording,
+        onStopRecording,
+        checkRecordingMutation,
+        setRecordingStatus,
+        form.reset,
+        form,
+        setBarcode,
+        setSystemLogs,
+        recordingStatus,
+    ]);
     return (
         <div className="flex items-center justify-end w-full gap-2">
             <Form {...form}>

@@ -1,5 +1,7 @@
 // app/api/complete-upload/route.ts
 
+import { finalPath } from "@/app/config/config";
+import prisma from "@/lib/prisma";
 import { exec } from "child_process";
 import fs from "fs";
 import { mkdir, rm } from "fs/promises";
@@ -8,7 +10,13 @@ import path from "path";
 
 export async function POST(req: NextRequest) {
     try {
-        const { sessionId, barcode } = await req.json();
+        const {
+            sessionId,
+            barcode,
+        }: {
+            sessionId: string;
+            barcode: string;
+        } = await req.json();
 
         if (!sessionId || !barcode) {
             return NextResponse.json({ error: "Missing sessionId or barcode" }, { status: 400 });
@@ -29,7 +37,9 @@ export async function POST(req: NextRequest) {
         if (files.length < 5) {
             try {
                 await rm(baseDir, { recursive: true, force: true });
-            } catch (err) {}
+            } catch (err) {
+                console.error(err);
+            }
 
             return NextResponse.json({ error: "invalid_video_length" }, { status: 422 });
         }
@@ -39,7 +49,7 @@ export async function POST(req: NextRequest) {
         const month = String(now.getMonth() + 1).padStart(2, "0");
         const day = String(now.getDate()).padStart(2, "0");
 
-        const finalDir = path.join(process.cwd(), "uploads", year, month, day);
+        const finalDir = path.join(process.cwd(), finalPath, year, month, day);
         await mkdir(finalDir, { recursive: true });
 
         const outputPath = path.join(finalDir, `${barcode}.mp4`);
@@ -57,7 +67,7 @@ export async function POST(req: NextRequest) {
             fs.writeFileSync(mergedWebm, Buffer.concat(allBuffers));
         }
 
-        // ✅ Step 3: FFmpeg convert — HANYA 1 command, tidak ada concat lagi
+        // ✅ Step 3: FFmpeg convert
         await new Promise((resolve, reject) => {
             exec(
                 `ffmpeg -y -i "${mergedWebm}" -c:v libx264 -preset fast -crf 23 -c:a aac "${outputPath}"`,
@@ -72,7 +82,7 @@ export async function POST(req: NextRequest) {
             );
         });
 
-        // ✅ Step 4: Hapus folder chunk — semua handle sudah bebas
+        // ✅ Step 4: Delete chunks folder
         try {
             await rm(baseDir, { recursive: true, force: true });
             console.log("Chunks cleaned up:", baseDir);
@@ -80,9 +90,25 @@ export async function POST(req: NextRequest) {
             console.error("Cleanup failed (non-critical):", rmErr);
         }
 
+        const outputVideoSrc = `/uploads/${year}/${month}/${day}/${barcode}.mp4`;
+        // ✅ Step 5: Update DB
+        try {
+            await prisma.record.update({
+                where: {
+                    barcodeResi: barcode,
+                },
+                data: {
+                    status: "done",
+                    videoPath: outputVideoSrc,
+                },
+            });
+        } catch (error) {
+            console.error("DB update failed (non-critical):", error);
+        }
+
         return NextResponse.json({
             success: true,
-            output: `/uploads/${year}/${month}/${day}/${barcode}.mp4`,
+            output: outputVideoSrc,
         });
     } catch (err) {
         console.error(err);

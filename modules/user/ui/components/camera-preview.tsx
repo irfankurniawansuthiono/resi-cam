@@ -1,9 +1,12 @@
 import { appToast } from "@/components/custom/app-toast";
 import { ButtonWithIcon } from "@/components/custom/button-with-icon";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useTRPC } from "@/trpc/client";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { AlertTriangleIcon, Disc2, StopCircle } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { SystemLog } from ".";
 type CameraStatus = "idle" | "loading" | "active" | "error";
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -18,14 +21,16 @@ type UploadChunk = {
 };
 export default function CameraPreview({
     camera,
+    setSystemLogs,
     recordingStatus,
     recordingTimer,
     barcode,
     onStopRecording,
 }: {
-    camera: { id: string; url: string };
+    camera: { id: string; url: string; name: string };
     recordingStatus: "idle" | "recording";
     recordingTimer: number;
+    setSystemLogs: React.Dispatch<React.SetStateAction<SystemLog[]>>;
     barcode: string;
     onStopRecording: () => void;
 }) {
@@ -34,7 +39,139 @@ export default function CameraPreview({
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
     const [status, setStatus] = useState<CameraStatus>("idle");
+    const [previewUrl, setPreviewUrl] = useState("");
+    const hasStartedRecordingRef = useRef(false);
     const [errorMsg, setErrorMsg] = useState("");
+    const trpc = useTRPC();
+    const checkRecordingMutation = useMutation(
+        trpc.record.check.mutationOptions({
+            onSuccess: () => {
+                setSystemLogs(prev => [
+                    ...prev,
+                    {
+                        message: "Checking barcode in database...",
+                        status: "info",
+                    },
+                ]);
+            },
+            onError: error => {
+                appToast.error(error.message);
+                setSystemLogs(prev => [
+                    ...prev,
+                    {
+                        message: "Failed to check barcode in database...\n" + error.message,
+                        status: "error",
+                    },
+                ]);
+            },
+        }),
+    );
+
+    const createRecordingMutation = useMutation(
+        trpc.record.create.mutationOptions({
+            onSuccess: () => {
+                setSystemLogs(prev => [
+                    ...prev,
+                    {
+                        message: "Adding barcode to database...",
+                        status: "info",
+                    },
+                ]);
+            },
+            onError: () => {},
+        }),
+    );
+    const createWCSMutation = useMutation(
+        trpc.wcs.create.mutationOptions({
+            onSuccess: data => {
+                console.log("WCS onSuccess fired", data);
+                console.log("createRecordingMutation:", createRecordingMutation);
+                setSystemLogs(prev => [
+                    ...prev,
+                    { message: `Web Camera Session created: ${data.name}`, status: "info" },
+                ]);
+
+                // Gunakan data.id dari server sebagai sessionId
+                const sessionId = data.id;
+                let chunkIndex = 0;
+                const queue: UploadChunk[] = [];
+
+                async function processQueue() {
+                    if (uploadingRef.current) return;
+                    uploadingRef.current = true;
+                    while (queue.length > 0) {
+                        const chunk = queue.shift();
+                        if (!chunk) continue;
+                        try {
+                            await uploadChunk(chunk);
+                        } catch {
+                            queue.unshift(chunk);
+                            break;
+                        }
+                    }
+                    uploadingRef.current = false;
+                }
+
+                if (!streamRef.current) return;
+                const recorder = new MediaRecorder(streamRef.current, {
+                    mimeType: "video/webm; codecs=vp8",
+                });
+
+                recorder.ondataavailable = e => {
+                    if (e.data.size > 0) {
+                        chunksRef.current.push(e.data);
+                        queue.push({ blob: e.data, index: chunkIndex++, sessionId });
+                        processQueue();
+                    }
+                };
+
+                recorder.onstop = async () => {
+                    try {
+                        const res = await axios.post("/api/complete-upload", {
+                            sessionId,
+                            barcode,
+                        });
+                        setPreviewUrl(res.data.output);
+                        if (res.status === 200) {
+                            setSystemLogs(prev => [
+                                ...prev,
+                                { status: "success", message: `Barcode ${barcode} uploaded to database, Video merged` },
+                            ]);
+                        }
+                        console.log("Merge success:", res.data);
+                    } catch (err) {
+                        if (axios.isAxiosError(err) && err.response?.status === 422) {
+                            appToast.error("Video is too short. Minimum 10 seconds.");
+                            setSystemLogs(prev => [
+                                ...prev,
+                                { status: "error", message: "Video is too short. Minimum 10 seconds." },
+                            ]);
+                        } else {
+                            appToast.error("Failed to merge chunks.");
+                            setSystemLogs(prev => [...prev, { status: "error", message: "Failed to merge chunks." }]);
+                        }
+                    }
+                };
+
+                recorder.start(2000);
+                mediaRecorderRef.current = recorder;
+
+                // Baru create record setelah recorder siap
+                createRecordingMutation.mutate({
+                    barcodeResi: barcode,
+                    videoPath: "#",
+                    status: "recording",
+                    sourceType: "WEBCAM",
+                    cameraId: undefined,
+                    webCameraSessionId: data.id,
+                });
+            },
+            onError: () => {
+                hasStartedRecordingRef.current = false; // reset guard kalau gagal
+                setSystemLogs(prev => [...prev, { message: "Failed to create Web Camera Session", status: "error" }]);
+            },
+        }),
+    );
     const uploadingRef = useRef(false);
     function stopStream() {
         streamRef.current?.getTracks().forEach(t => t.stop());
@@ -42,37 +179,56 @@ export default function CameraPreview({
         if (videoRef.current) videoRef.current.srcObject = null;
     }
 
-    async function uploadChunk(chunk: UploadChunk) {
-        const formData = new FormData();
-        formData.append("file", chunk.blob);
-        formData.append("index", String(chunk.index));
-        formData.append("sessionId", chunk.sessionId);
+    const uploadChunk = useCallback(
+        async (chunk: UploadChunk) => {
+            const formData = new FormData();
+            formData.append("file", chunk.blob);
+            formData.append("index", String(chunk.index));
+            formData.append("sessionId", chunk.sessionId);
 
-        try {
-            await axios.post("/api/upload-chunk", formData, {
-                timeout: 10000,
-            });
-        } catch (err) {
-            throw err;
-        }
-    }
+            try {
+                await axios.post("/api/upload-chunk", formData, {
+                    timeout: 10000,
+                });
+            } catch (err) {
+                setSystemLogs(prev => [...prev, { status: "error", message: `Failed to upload chunk ${chunk.index}` }]);
+                console.error(err);
+                throw err;
+            }
+        },
+        [setSystemLogs],
+    );
 
     useEffect(() => {
-        if (camera.id !== "webcam") {
+        if (!camera.url.startsWith("webcam")) {
+            // Stop recorder lama juga saat kamera bukan webcam
+            if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+                mediaRecorderRef.current.stop();
+                mediaRecorderRef.current = null;
+            }
+            hasStartedRecordingRef.current = false; // ← tambahkan ini
             stopStream();
             return;
         }
 
         let cancelled = false;
-
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+            mediaRecorderRef.current.stop();
+            mediaRecorderRef.current = null;
+        }
+        hasStartedRecordingRef.current = false; // ← reset guard di sini
+        chunksRef.current = [];
         async function startCamera() {
             setStatus("loading");
             setErrorMsg("");
 
             try {
-                // if camera == webcam
-                if (camera.id === "webcam") {
-                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                if (camera.url.startsWith("webcam")) {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            deviceId: { exact: camera.id },
+                        },
+                    });
                     if (cancelled) {
                         stream.getTracks().forEach(t => t.stop());
                         return;
@@ -81,6 +237,7 @@ export default function CameraPreview({
                     streamRef.current = stream;
                     if (videoRef.current) videoRef.current.srcObject = stream;
                     setStatus("active");
+                    setSystemLogs(prev => [...prev, { status: "info", message: `Camera ${camera.name} started` }]);
                     return;
                 }
             } catch (err) {
@@ -95,83 +252,48 @@ export default function CameraPreview({
         startCamera();
         return () => {
             cancelled = true;
+            // Stop recorder di cleanup juga
+            if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+                mediaRecorderRef.current.stop();
+                mediaRecorderRef.current = null;
+            }
+            hasStartedRecordingRef.current = false;
             stopStream();
         };
-    }, [camera]);
+    }, [camera, setSystemLogs]);
 
     useEffect(() => {
         function startRecording() {
+            if (hasStartedRecordingRef.current) return;
+            // check barcode on database
+            if (!barcode) {
+                appToast.error("Barcode is required");
+                return;
+            }
+            checkRecordingMutation.mutate({ barcode });
+
+            hasStartedRecordingRef.current = true;
+
+            setSystemLogs(prev => [
+                ...prev,
+                { status: "process", message: `Starting recording...\n${barcode}, with camera\n${camera.name}` },
+            ]);
+
             if (!streamRef.current) return;
-            if (camera.id === "webcam") {
-                let sessionId = "";
-                let chunkIndex = 0;
 
-                async function processQueue() {
-                    if (uploadingRef.current) return;
-                    uploadingRef.current = true;
-
-                    while (queue.length > 0) {
-                        const chunk = queue.shift();
-
-                        if (!chunk) continue; // guard
-
-                        try {
-                            await uploadChunk(chunk);
-                        } catch {
-                            queue.unshift(chunk);
-                            break;
-                        }
-                    }
-
-                    uploadingRef.current = false;
-                }
-
-                sessionId = crypto.randomUUID();
-                chunkIndex = 0;
-                const recorder = new MediaRecorder(streamRef.current, {
-                    mimeType: "video/webm; codecs=vp8",
+            if (camera.url.startsWith("webcam")) {
+                createWCSMutation.mutate({
+                    id: camera.id,
+                    name: camera.name,
+                    url: camera.url,
                 });
-
-                const queue: UploadChunk[] = [];
-
-                recorder.ondataavailable = e => {
-                    if (e.data.size > 0) {
-                        chunksRef.current.push(e.data);
-                        queue.push({
-                            blob: e.data,
-                            index: chunkIndex++,
-                            sessionId,
-                        });
-
-                        processQueue();
-                    }
-                };
-
-                recorder.onstop = async () => {
-                    try {
-                        const res = await axios.post("/api/complete-upload", {
-                            sessionId,
-                            barcode,
-                        });
-                        console.log("Merge success:", res.data);
-                    } catch (err) {
-                        if (axios.isAxiosError(err) && err.response?.status === 422) {
-                            appToast.error("Video is too short. Minimum 10 seconds.");
-                        } else {
-                            // Optional: update DB statusto failed if merge failed
-                            console.error("Merge failed:", err);
-                            appToast.error("Failed to merge chunks.");
-                        }
-                    }
-                };
-
-                recorder.start(2000);
-                mediaRecorderRef.current = recorder;
+                // MediaRecorder sekarang diinit di onSuccess ↑
             }
         }
 
         function stopRecordingInternal() {
-            if (camera.id === "webcam") {
+            hasStartedRecordingRef.current = false;
+            if (camera.url.startsWith("webcam")) {
                 if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
                     mediaRecorderRef.current.stop();
                 }
@@ -184,7 +306,8 @@ export default function CameraPreview({
         if (recordingStatus === "idle") {
             stopRecordingInternal();
         }
-    }, [recordingStatus, camera.id, barcode]);
+    }, [recordingStatus, camera, setSystemLogs, barcode, createWCSMutation, uploadChunk, checkRecordingMutation]);
+
     useEffect(() => {
         return () => {
             if (mediaRecorderRef.current?.state !== "inactive") {
@@ -192,6 +315,7 @@ export default function CameraPreview({
             }
         };
     }, []);
+
     return (
         <div className="w-full space-y-4">
             <div className="relative w-full aspect-video  bg-muted rounded-lg overflow-hidden">
@@ -214,7 +338,7 @@ export default function CameraPreview({
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-neutral-500">
                         {status === "loading" && (
                             <p className="text-sm">
-                                {camera.id === "webcam"
+                                {camera.url.startsWith("webcam")
                                     ? "checking for camera access..."
                                     : "Connecting to IP camera..."}
                             </p>
@@ -287,6 +411,12 @@ export default function CameraPreview({
                     Stop Recording
                 </ButtonWithIcon>
             </div>
+            {/* {previewUrl && (
+                <div>
+                    <p>Preview :</p>
+                    <video controls src={previewUrl} />
+                </div>
+            )} */}
         </div>
     );
 }

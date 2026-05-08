@@ -105,7 +105,7 @@ const SidebarLogo = () => {
                         className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden"
                     >
                         <span className="truncate font-semibold uppercase tracking-wider">Resi-Cam</span>
-                        <span className="truncate text-xs text-muted-foreground">bukti packing setiap pesanan</span>
+                        <span className="truncate text-xs text-muted-foreground">V1.2.10</span>
                     </div>
                 </SidebarMenuButton>
             </SidebarMenuItem>
@@ -272,7 +272,7 @@ export default function AppSidebar() {
                             <DropdownMenuTrigger asChild>
                                 <SidebarMenuButton
                                     size="lg"
-                                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground flex justify-between"
                                 >
                                     {user && (
                                         <UserAvatarProfile
