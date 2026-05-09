@@ -19,7 +19,7 @@ export default function LogsDataTable() {
     const debouncedSearch = useDebounce(search, 500);
 
     const { data, isLoading, isError, error } = useQuery(
-        trpc.camera.get.queryOptions({
+        trpc.logs.get.queryOptions({
             limit,
             page,
             search: debouncedSearch,
@@ -43,7 +43,7 @@ export default function LogsDataTable() {
             filterComponents={<></>}
             onPageChange={(page: number) => setPage(page)}
             columns={columns(page, limit)}
-            data={data?.cameras || []}
+            data={data?.logs || []}
             searchPlaceHolder="Search by message"
             metadata={data?.meta}
             isLoading={isLoading}
