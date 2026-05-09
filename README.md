@@ -461,17 +461,17 @@ Made with ❤️ by the resi-cam community
 
 Get a glimpse of what resi-cam looks like in action:
 
-| Dashboard                             | Pack                        |
-| ------------------------------------- | --------------------------- |
-| ![Dashboard](./preview/Dashboard.jpg) | ![Pack](./preview/Pack.jpg) |
+| Dashboard                             | Pack                         |
+| ------------------------------------- | ---------------------------- |
+| ![Dashboard](./preview/Dashboard.jpe) | ![Pack](./preview/Pack.jpeg) |
 
-| Pack History                                  | IP Cameras                                |
-| --------------------------------------------- | ----------------------------------------- |
-| ![Pack History](./preview/Pack%20History.jpg) | ![IP Cameras](./preview/IP%20Cameras.jpg) |
+| Pack History                                   | IP Cameras                                 |
+| ---------------------------------------------- | ------------------------------------------ |
+| ![Pack History](./preview/Pack%20History.jpeg) | ![IP Cameras](./preview/IP%20Cameras.jpeg) |
 
-| Account                           | System Logs                                 |
-| --------------------------------- | ------------------------------------------- |
-| ![Account](./preview/Account.jpg) | ![System Logs](./preview/System%20Logs.jpg) |
+| Account                            | System Logs                                  |
+| ---------------------------------- | -------------------------------------------- |
+| ![Account](./preview/Account.jpeg) | ![System Logs](./preview/System%20Logs.jpeg) |
 
 ---
 
@@ -915,17 +915,17 @@ Pengembangan proyek ini dibantu oleh AI tools berikut:
 
 Berikut tampilan resi-cam secara langsung:
 
-| Dashboard                             | Pack                        |
-| ------------------------------------- | --------------------------- |
-| ![Dashboard](./preview/Dashboard.jpg) | ![Pack](./preview/Pack.jpg) |
+| Dashboard                              | Pack                         |
+| -------------------------------------- | ---------------------------- |
+| ![Dashboard](./preview/Dashboard.jpeg) | ![Pack](./preview/Pack.jpeg) |
 
-| Pack History                                  | IP Cameras                                |
-| --------------------------------------------- | ----------------------------------------- |
-| ![Pack History](./preview/Pack%20History.jpg) | ![IP Cameras](./preview/IP%20Cameras.jpg) |
+| Pack History                                   | IP Cameras                                 |
+| ---------------------------------------------- | ------------------------------------------ |
+| ![Pack History](./preview/Pack%20History.jpeg) | ![IP Cameras](./preview/IP%20Cameras.jpeg) |
 
-| Account                           | System Logs                                 |
-| --------------------------------- | ------------------------------------------- |
-| ![Account](./preview/Account.jpg) | ![System Logs](./preview/System%20Logs.jpg) |
+| Account                            | System Logs                                  |
+| ---------------------------------- | -------------------------------------------- |
+| ![Account](./preview/Account.jpeg) | ![System Logs](./preview/System%20Logs.jpeg) |
 
 ---
 
