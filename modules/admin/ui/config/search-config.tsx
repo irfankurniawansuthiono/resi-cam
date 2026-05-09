@@ -1,4 +1,4 @@
-import { LayoutDashboard, Package, Settings } from "lucide-react";
+import { History, LayoutDashboard, Settings } from "lucide-react";
 
 export type SearchItem = {
     title: string;
@@ -25,10 +25,10 @@ export const searchItems: SearchItem[] = [
         shortcut: ["s", "s"],
     },
     {
-        title: "Pack",
-        url: "/pack",
+        title: "Pack History",
+        url: "/history",
         group: "Pages",
-        icon: Package,
+        icon: History,
         shortcut: ["p", "p"],
     },
 ];

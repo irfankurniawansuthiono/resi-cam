@@ -53,6 +53,15 @@ export const navItems: NavItem[] = [
         items: [],
     },
     {
+        title: "Pack History",
+        url: "/history",
+        icon: "history",
+        isActive: false,
+        shortcut: ["h", "h"],
+        access: { role: [role.admin] },
+        items: [],
+    },
+    {
         title: "Manage",
         url: "#", // Placeholder as there is no direct link for the parent
         icon: "settings2",
