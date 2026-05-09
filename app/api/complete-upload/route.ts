@@ -1,6 +1,7 @@
 // app/api/complete-upload/route.ts
 
 import { finalPath } from "@/app/config/config";
+import { createLogs } from "@/lib/logs";
 import prisma from "@/lib/prisma";
 import { exec } from "child_process";
 import fs from "fs";
@@ -36,6 +37,11 @@ export async function POST(req: NextRequest) {
 
         if (files.length < 5) {
             try {
+                await prisma.record.delete({
+                    where: {
+                        barcodeResi: barcode,
+                    },
+                });
                 await rm(baseDir, { recursive: true, force: true });
             } catch (err) {
                 console.error(err);
@@ -75,6 +81,11 @@ export async function POST(req: NextRequest) {
                     if (err) {
                         console.error("FFmpeg error:", stderr);
                         reject(err);
+                        createLogs({
+                            message: `Failed to merge chunks: ${sessionId} for barcode ${barcode}`,
+                            status: "failed",
+                            chunkId: sessionId,
+                        });
                     } else {
                         resolve(true);
                     }
@@ -84,10 +95,16 @@ export async function POST(req: NextRequest) {
 
         // ✅ Step 4: Delete chunks folder
         try {
+            console.log("Video merged:", outputPath);
             await rm(baseDir, { recursive: true, force: true });
             console.log("Chunks cleaned up:", baseDir);
         } catch (rmErr) {
             console.error("Cleanup failed (non-critical):", rmErr);
+            createLogs({
+                message: `Failed to cleanup chunks: ${sessionId} for barcode ${barcode}`,
+                status: "failed",
+                chunkId: sessionId,
+            });
         }
 
         const outputVideoSrc = `/uploads/${year}/${month}/${day}/${barcode}.mp4`;
@@ -104,6 +121,11 @@ export async function POST(req: NextRequest) {
             });
         } catch (error) {
             console.error("DB update failed (non-critical):", error);
+            createLogs({
+                message: `Failed to update DB: ${sessionId} for barcode ${barcode}`,
+                status: "failed",
+                chunkId: sessionId,
+            });
         }
 
         return NextResponse.json({

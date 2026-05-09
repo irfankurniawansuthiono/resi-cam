@@ -1,16 +1,16 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { AlertTriangleIcon, CircleCheckBig, Info, Loader, Logs } from "lucide-react";
+import { AlertTriangleIcon, CircleCheckBig, Info, Loader, Logs, ShieldAlert } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 export default function TemporarySystemLogs({
     systemLogs,
 }: {
-    systemLogs: { status: "info" | "error" | "process" | "success"; message: string }[];
+    systemLogs: { status: "info" | "error" | "process" | "success" | "warning"; message: string }[];
 }) {
     const bottomRef = useRef<HTMLDivElement>(null);
-    function generateAlerts(status: "info" | "error" | "process" | "success", message: string) {
+    function generateAlerts(status: "info" | "error" | "process" | "success" | "warning", message: string) {
         switch (status) {
             case "info":
                 return (
@@ -20,10 +20,18 @@ export default function TemporarySystemLogs({
                         <AlertDescription>{message}</AlertDescription>
                     </Alert>
                 );
+            case "warning":
+                return (
+                    <Alert variant="warning" className="max-w-md">
+                        <AlertTriangleIcon className="animate-pulse" />
+                        <AlertTitle>Warning!</AlertTitle>
+                        <AlertDescription>{message}</AlertDescription>
+                    </Alert>
+                );
             case "error":
                 return (
                     <Alert variant="destructive" className="max-w-md">
-                        <AlertTriangleIcon className="animate-ping" />
+                        <ShieldAlert className="animate-ping" />
                         <AlertTitle>Error!</AlertTitle>
                         <AlertDescription>{message}</AlertDescription>
                     </Alert>

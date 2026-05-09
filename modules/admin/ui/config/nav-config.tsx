@@ -100,7 +100,14 @@ export const navItems: NavItem[] = [
         items: [],
         access: { role: [role.admin] },
     },
-
+    {
+        title: "Logs",
+        url: "/admin/logs",
+        icon: "logs",
+        isActive: false,
+        items: [],
+        access: { role: [role.admin] },
+    },
     // {
     //   title: "Inbox",
     //   url: "/admin/inbox",

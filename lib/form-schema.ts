@@ -1,4 +1,4 @@
-import { SourceType, Status } from "@/app/generated/prisma";
+import { logStatus, SourceType, Status } from "@/app/generated/prisma";
 import { roleList } from "@/modules/admin/ui/config/auth/role.user";
 import { z } from "zod";
 
@@ -130,6 +130,11 @@ export const addRecordSchema = z.object({
     webCameraSessionId: z.string().optional(),
 });
 
+export const addLogsSchema = z.object({
+    status: z.enum(logStatus),
+    message: z.string(),
+    chunkId: z.string().optional(),
+});
 export type AddCameraSchema = z.infer<typeof addCameraSchema>;
 // Type auth form
 export type LoginFormValues = z.infer<typeof loginSchema>;

@@ -6,7 +6,7 @@ import CameraSelect from "./form/camera-select";
 import TemporarySystemLogs from "./temporary-system-logs";
 
 export type SystemLog = {
-    status: "info" | "error" | "process" | "success";
+    status: "info" | "error" | "process" | "success" | "warning";
     message: string;
 };
 

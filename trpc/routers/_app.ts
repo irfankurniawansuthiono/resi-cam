@@ -1,5 +1,6 @@
 import { createTRPCRouter } from "@/trpc/init";
 import { cameraRouter } from "./camera";
+import { dashboardRouter } from "./dashboard";
 import { recordingRouter } from "./recording";
 import { userRouter } from "./user";
 import { webCameraSessionRouter } from "./webCameraSession";
@@ -8,6 +9,7 @@ export const appRouter = createTRPCRouter({
     camera: cameraRouter,
     record: recordingRouter,
     wcs: webCameraSessionRouter,
+    dashboard: dashboardRouter,
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;

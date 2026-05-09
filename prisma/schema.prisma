@@ -117,19 +117,21 @@ enum Status {
   done
   failed
 }
+
 enum SourceType {
   CAMERA
   WEBCAM
 }
+
 model Record {
-  id                 String   @id @default(cuid())
-  barcodeResi        String   @unique
+  id                 String     @id @default(cuid())
+  barcodeResi        String     @unique
   videoPath          String
   status             Status
   cameraId           String?
   webCameraSessionId String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
   recordedById       String?
   sourceType         SourceType
 
@@ -149,7 +151,7 @@ model Camera {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   records Record[]
 
   user User @relation(fields: [userId], references: [id])
@@ -169,4 +171,18 @@ model WebCameraSession {
 
   user    User     @relation(fields: [userId], references: [id])
   records Record[]
+}
+
+enum LogStatus {
+  done
+  failed
+}
+
+model logs {
+  id        String    @id @default(cuid())
+  status    LogStatus
+  message   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  chunkId   String?
 }

@@ -25,6 +25,7 @@ import {
     Layers,
     LayoutDashboard,
     Loader2,
+    Logs,
     Mail,
     Moon,
     Package,
@@ -106,6 +107,7 @@ export const DiscordIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export const Icons = {
+    logs: Logs,
     dashboard: LayoutDashboard,
     logo: Command,
     settings2: Settings2,

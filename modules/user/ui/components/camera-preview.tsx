@@ -2,7 +2,7 @@ import { appToast } from "@/components/custom/app-toast";
 import { ButtonWithIcon } from "@/components/custom/button-with-icon";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useTRPC } from "@/trpc/client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { AlertTriangleIcon, Disc2, StopCircle } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -41,6 +41,7 @@ export default function CameraPreview({
     const [status, setStatus] = useState<CameraStatus>("idle");
     const [previewUrl, setPreviewUrl] = useState("");
     const hasStartedRecordingRef = useRef(false);
+    const queryClient = useQueryClient();
     const [errorMsg, setErrorMsg] = useState("");
     const trpc = useTRPC();
 
@@ -54,6 +55,7 @@ export default function CameraPreview({
                         status: "info",
                     },
                 ]);
+                queryClient.invalidateQueries(trpc.record.get.queryFilter());
             },
             onError: () => {},
         }),
@@ -61,8 +63,6 @@ export default function CameraPreview({
     const createWCSMutation = useMutation(
         trpc.wcs.create.mutationOptions({
             onSuccess: data => {
-                console.log("WCS onSuccess fired", data);
-                console.log("createRecordingMutation:", createRecordingMutation);
                 setSystemLogs(prev => [
                     ...prev,
                     { message: `Web Camera Session created: ${data.name}`, status: "info" },
@@ -114,8 +114,8 @@ export default function CameraPreview({
                                 ...prev,
                                 { status: "success", message: `Barcode ${barcode} uploaded to database, Video merged` },
                             ]);
+                            queryClient.invalidateQueries(trpc.record.get.queryFilter());
                         }
-                        console.log("Merge success:", res.data);
                     } catch (err) {
                         if (axios.isAxiosError(err) && err.response?.status === 422) {
                             appToast.error("Video is too short. Minimum 10 seconds.");
@@ -221,7 +221,6 @@ export default function CameraPreview({
                 if (cancelled) return;
                 const name = (err as DOMException).name;
                 setErrorMsg(ERROR_MESSAGES[name] ?? `Failed to access camera: ${(err as Error).message}`);
-                appToast.error(ERROR_MESSAGES[name] ?? `Failed to access camera: ${(err as Error).message}`);
                 setStatus("error");
             }
         }

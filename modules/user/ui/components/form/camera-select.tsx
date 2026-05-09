@@ -35,25 +35,89 @@ export default function CameraSelect({
         mode: "onChange",
     });
     useEffect(() => {
+        async function checkCameraAccessibility(devices: MediaDeviceInfo[]) {
+            const results = await Promise.allSettled(
+                devices.map(async device => {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { deviceId: { exact: device.deviceId } },
+                    });
+                    stream.getTracks().forEach(track => track.stop());
+                    return device;
+                }),
+            );
+
+            results.forEach((result, index) => {
+                if (result.status === "rejected") {
+                    const err = result.reason as DOMException;
+                    const cameraName = devices[index].label || `Camera ${index + 1}`;
+                    if (err.name === "NotReadableError") {
+                        setSystemLogs(prev => [
+                            ...prev,
+                            {
+                                status: "warning",
+                                message: `"${cameraName}" is not accessible (in use by another app)`,
+                            },
+                        ]);
+                    }
+                }
+            });
+        }
+
         async function load() {
             setSystemLogs(prev => [...prev, { status: "process", message: "Loading cameras..." }]);
 
+            // Step 1: Enumerate dulu tanpa minta permission
+            let videoDevices: MediaDeviceInfo[] = [];
             try {
-                await navigator.mediaDevices.getUserMedia({ video: true });
-
                 const devices = await navigator.mediaDevices.enumerateDevices();
+                videoDevices = devices.filter(d => d.kind === "videoinput");
 
-                setWebcamList(devices.filter(d => d.kind === "videoinput"));
-
-                setSystemLogs(prev => [...prev, { status: "info", message: "Web Cameras loaded" }]);
+                if (videoDevices.length === 0) {
+                    setSystemLogs(prev => [...prev, { status: "error", message: "No cameras found" }]);
+                    return;
+                }
             } catch (error) {
                 console.error(error);
-                setSystemLogs(prev => [...prev, { status: "error", message: "Failed to load cameras" }]);
+                setSystemLogs(prev => [...prev, { status: "error", message: "Failed to enumerate devices" }]);
+                return;
+            }
+
+            // Step 2: Minta permission
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                stream.getTracks().forEach(track => track.stop());
+
+                // Step 3: Enumerate ulang setelah permission granted (label baru tersedia)
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                videoDevices = devices.filter(d => d.kind === "videoinput");
+                setWebcamList(videoDevices);
+
+                // Step 4: Cek satu per satu untuk NotReadableError
+                await checkCameraAccessibility(videoDevices);
+
+                setSystemLogs(prev => [
+                    ...prev,
+                    { status: "info", message: `${videoDevices.length} camera(s) loaded` },
+                ]);
+            } catch (err) {
+                console.warn("getUserMedia warning:", err);
+                const domErr = err as DOMException;
+
+                if (domErr.name === "NotAllowedError") {
+                    setSystemLogs(prev => [...prev, { status: "error", message: "Camera permission denied" }]);
+                } else if (domErr.name === "NotFoundError") {
+                    setSystemLogs(prev => [...prev, { status: "error", message: "Camera not found" }]);
+                } else if (domErr.name === "NotReadableError") {
+                    setWebcamList(videoDevices);
+                    await checkCameraAccessibility(videoDevices);
+                } else {
+                    setSystemLogs(prev => [...prev, { status: "error", message: "Failed to access camera" }]);
+                }
             }
         }
 
         load();
-    }, [setSystemLogs]); // <-- IMPORTANT: kosong
+    }, [setSystemLogs]);
     const cameraValueWatch = useWatch({ control: form.control, name: "camera" });
     const { data: cameras, isLoading } = useCameras();
     const onSubmit = (data: { camera: string }) => {

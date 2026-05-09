@@ -1,2 +1,2 @@
 export const finalPath = "/uploads ";
-export const version = "1.2.25";
+export const version = "1.2.30";

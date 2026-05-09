@@ -17,8 +17,11 @@ const columns = (page: number, limit: number): ColumnDef<RecordListItem>[] => [
     },
     {
         accessorKey: "barcodeResi",
-        header: "Barcode Resi",
+        header: "No. Resi",
         enableHiding: false,
+        cell: ({ row }) => {
+            return <p className="font-mono">{row.original.barcodeResi}</p>;
+        },
     },
     {
         accessorKey: "recordedBy.name",
