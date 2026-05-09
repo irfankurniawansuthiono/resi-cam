@@ -81,26 +81,24 @@ export default function CameraSelect({
                 setSystemLogs(prev => [...prev, { status: "error", message: "Failed to enumerate devices" }]);
                 return;
             }
-
             // Step 2: Minta permission
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 stream.getTracks().forEach(track => track.stop());
 
-                // Step 3: Enumerate ulang setelah permission granted (label baru tersedia)
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                videoDevices = devices.filter(d => d.kind === "videoinput");
-                setWebcamList(videoDevices);
+                // Step 3: Enumerate ulang setelah permission granted
+                const devicesAfterPermission = await navigator.mediaDevices.enumerateDevices();
+                const updatedVideoDevices = devicesAfterPermission.filter(d => d.kind === "videoinput");
 
-                // Step 4: Cek satu per satu untuk NotReadableError
-                await checkCameraAccessibility(videoDevices);
+                setWebcamList(updatedVideoDevices);
+
+                await checkCameraAccessibility(updatedVideoDevices);
 
                 setSystemLogs(prev => [
                     ...prev,
-                    { status: "info", message: `${videoDevices.length} camera(s) loaded` },
+                    { status: "info", message: `${updatedVideoDevices.length} camera(s) loaded` },
                 ]);
             } catch (err) {
-                console.warn("getUserMedia warning:", err);
                 const domErr = err as DOMException;
 
                 if (domErr.name === "NotAllowedError") {
@@ -108,8 +106,10 @@ export default function CameraSelect({
                 } else if (domErr.name === "NotFoundError") {
                     setSystemLogs(prev => [...prev, { status: "error", message: "Camera not found" }]);
                 } else if (domErr.name === "NotReadableError") {
-                    setWebcamList(videoDevices);
-                    await checkCameraAccessibility(videoDevices);
+                    const devicesAfterPermission = await navigator.mediaDevices.enumerateDevices();
+                    const updatedVideoDevices = devicesAfterPermission.filter(d => d.kind === "videoinput");
+                    setWebcamList(updatedVideoDevices);
+                    await checkCameraAccessibility(updatedVideoDevices);
                 } else {
                     setSystemLogs(prev => [...prev, { status: "error", message: "Failed to access camera" }]);
                 }
