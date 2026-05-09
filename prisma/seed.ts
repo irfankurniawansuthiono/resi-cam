@@ -4,7 +4,7 @@ async function main() {
     const newUser = await auth.api.createUser({
         body: {
             email: "admin@gmail.com",
-            password: "!Admin123",
+            password: "!Admin1234",
             name: "Admin",
             role: "admin",
         },

@@ -241,6 +241,7 @@ NEXT_PUBLIC_URL=http://localhost:3000
 
 # Database
 DATABASE_URL="postgresql://{username}:{password}@localhost:{port}/{db}?schema=public"
+
 ```
 
 > ⚠️ **Security Note:** Never commit your `.env` file to version control. Make sure `.env` is listed in your `.gitignore`.
