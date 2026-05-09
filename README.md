@@ -457,6 +457,24 @@ Made with ❤️ by the resi-cam community
 
 ---
 
+### 📸 App Preview
+
+Get a glimpse of what resi-cam looks like in action:
+
+| Dashboard                             | Pack                        |
+| ------------------------------------- | --------------------------- |
+| ![Dashboard](./preview/Dashboard.jpg) | ![Pack](./preview/Pack.jpg) |
+
+| Pack History                                  | IP Cameras                                |
+| --------------------------------------------- | ----------------------------------------- |
+| ![Pack History](./preview/Pack%20History.jpg) | ![IP Cameras](./preview/IP%20Cameras.jpg) |
+
+| Account                           | System Logs                                 |
+| --------------------------------- | ------------------------------------------- |
+| ![Account](./preview/Account.jpg) | ![System Logs](./preview/System%20Logs.jpg) |
+
+---
+
 ---
 
 ## 🇮🇩 Bahasa Indonesia
@@ -891,10 +909,32 @@ Pengembangan proyek ini dibantu oleh AI tools berikut:
 
 ---
 
+---
+
+### 📸 Tampilan Aplikasi
+
+Berikut tampilan resi-cam secara langsung:
+
+| Dashboard                             | Pack                        |
+| ------------------------------------- | --------------------------- |
+| ![Dashboard](./preview/Dashboard.jpg) | ![Pack](./preview/Pack.jpg) |
+
+| Pack History                                  | IP Cameras                                |
+| --------------------------------------------- | ----------------------------------------- |
+| ![Pack History](./preview/Pack%20History.jpg) | ![IP Cameras](./preview/IP%20Cameras.jpg) |
+
+| Account                           | System Logs                                 |
+| --------------------------------- | ------------------------------------------- |
+| ![Account](./preview/Account.jpg) | ![System Logs](./preview/System%20Logs.jpg) |
+
+---
+
+---
+
 <div align="center">
 
 Dibuat dengan ❤️ oleh komunitas resi-cam
 
 [⬆ Kembali ke atas](#-resi-cam)
 
-</div>
+## </div>
