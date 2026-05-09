@@ -475,8 +475,6 @@ Get a glimpse of what resi-cam looks like in action:
 
 ---
 
----
-
 ## 🇮🇩 Bahasa Indonesia
 
 <div align="center" id="bahasa-indonesia">
@@ -906,8 +904,6 @@ Pengembangan proyek ini dibantu oleh AI tools berikut:
 | **ChatGPT** oleh OpenAI   | Bantuan debugging, ideasi fitur, generasi kode         | [chatgpt.com](https://chatgpt.com) |
 
 > AI-AI ini membantu mempercepat pengembangan, namun semua keputusan akhir, review kode, dan pilihan arsitektur tetap dibuat oleh developer manusia.
-
----
 
 ---
 
