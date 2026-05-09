@@ -461,9 +461,9 @@ Made with ❤️ by the resi-cam community
 
 Get a glimpse of what resi-cam looks like in action:
 
-| Dashboard                             | Pack                         |
-| ------------------------------------- | ---------------------------- |
-| ![Dashboard](./preview/Dashboard.jpe) | ![Pack](./preview/Pack.jpeg) |
+| Dashboard                              | Pack                         |
+| -------------------------------------- | ---------------------------- |
+| ![Dashboard](./preview/Dashboard.jpeg) | ![Pack](./preview/Pack.jpeg) |
 
 | Pack History                                   | IP Cameras                                 |
 | ---------------------------------------------- | ------------------------------------------ |
