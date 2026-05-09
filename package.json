@@ -1,6 +1,6 @@
 {
     "name": "resi-cam",
-    "version": "1.2.30",
+    "version": "1.2.33",
     "private": true,
     "scripts": {
         "dev": "next dev",
