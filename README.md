@@ -34,6 +34,7 @@
 - [Configuration](#configuration)
 - [Contributing (Pull Request Guide)](#contributing-pull-request-guide)
 - [Contributors](#contributors)
+- [Acknowledgements](#acknowledgements)
 
 ---
 
@@ -409,6 +410,43 @@ Thanks to all the amazing people who have contributed to this project! 🙌
 
 ---
 
+### Acknowledgements
+
+This project would not have been possible without the following incredible resources, tools, and people. A huge thank you to everyone listed here. 🙏
+
+#### 🧱 Project Foundation
+
+This project was **bootstrapped from** the open-source starter kit by **Candra Wali Sanjaya**:
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/chndrwali/nextjs-starter-kit">
+        <img src="https://github.com/chndrwali.png" width="80" style="border-radius:50%"/><br/>
+        <sub><b>chndrwali</b></sub><br/>
+        <sub>nextjs-starter-kit</sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
+> 🔗 **[chndrwali/nextjs-starter-kit](https://github.com/chndrwali/nextjs-starter-kit)** — Modern Next.js 16 Boilerplate: React 19 + Better Auth + tRPC v11 + Prisma 7 + UploadThing + shadcn/ui + Tailwind v4.
+>
+> The starter kit provided the solid architectural foundation — authentication, tRPC setup, Prisma integration, and UI structure — that this project is built upon.
+
+#### 🤖 AI Assistance
+
+Development of this project was assisted by the following AI tools:
+
+| AI | Role | Link |
+|---|---|---|
+| **Claude** by Anthropic | Code review, documentation writing, architecture guidance | [claude.ai](https://claude.ai) |
+| **ChatGPT** by OpenAI | Debugging assistance, feature ideation, code generation | [chatgpt.com](https://chatgpt.com) |
+
+> These AI assistants helped accelerate development, but all final decisions, code review, and architecture choices were made by the human developer.
+
+---
+
 <div align="center">
 
 Made with ❤️ by the resi-cam community
@@ -439,6 +477,7 @@ Made with ❤️ by the resi-cam community
 - [Konfigurasi](#konfigurasi)
 - [Cara Berkontribusi (Panduan Pull Request)](#cara-berkontribusi-panduan-pull-request)
 - [Kontributor](#kontributor)
+- [Penghargaan](#penghargaan)
 
 ---
 
@@ -811,6 +850,43 @@ Terima kasih kepada semua orang luar biasa yang telah berkontribusi pada proyek 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 > Ingin nama Anda muncul di sini? [Kirimkan Pull Request](#cara-berkontribusi-panduan-pull-request)!
+
+---
+
+### Penghargaan
+
+Proyek ini tidak akan terwujud tanpa sumber daya, alat, dan orang-orang luar biasa berikut ini. Terima kasih sebesar-besarnya untuk semua yang tercantum di sini. 🙏
+
+#### 🧱 Fondasi Proyek
+
+Proyek ini **dibangun di atas** starter kit open-source karya **Candra Wali Sanjaya**:
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/chndrwali/nextjs-starter-kit">
+        <img src="https://github.com/chndrwali.png" width="80" style="border-radius:50%"/><br/>
+        <sub><b>chndrwali</b></sub><br/>
+        <sub>nextjs-starter-kit</sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
+> 🔗 **[chndrwali/nextjs-starter-kit](https://github.com/chndrwali/nextjs-starter-kit)** — Modern Next.js 16 Boilerplate: React 19 + Better Auth + tRPC v11 + Prisma 7 + UploadThing + shadcn/ui + Tailwind v4.
+>
+> Starter kit ini menyediakan fondasi arsitektur yang kokoh — autentikasi, setup tRPC, integrasi Prisma, dan struktur UI — yang menjadi dasar dibangunnya proyek ini.
+
+#### 🤖 Bantuan AI
+
+Pengembangan proyek ini dibantu oleh AI tools berikut:
+
+| AI | Peran | Tautan |
+|---|---|---|
+| **Claude** oleh Anthropic | Review kode, penulisan dokumentasi, panduan arsitektur | [claude.ai](https://claude.ai) |
+| **ChatGPT** oleh OpenAI | Bantuan debugging, ideasi fitur, generasi kode | [chatgpt.com](https://chatgpt.com) |
+
+> AI-AI ini membantu mempercepat pengembangan, namun semua keputusan akhir, review kode, dan pilihan arsitektur tetap dibuat oleh developer manusia.
 
 ---
 
