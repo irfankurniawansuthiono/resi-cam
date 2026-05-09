@@ -261,33 +261,57 @@ bun dev
 
 The application will be available at [http://localhost:3000](http://localhost:3000).
 
+> 💡 For most users, you can ignore this section entirely if you're using v1.3.0+
+
+## Adding Timestamp Overlay (CCTV-style)
+
+> ⚠️ **Deprecated since v1.3.0**  
+> Starting from version **1.3.0**, timestamp overlay is now handled internally by the application.  
+> **OBS is no longer required.**
+
+### ✅ Current Approach (v1.3.0+)
+
+Timestamp overlay is automatically rendered during recording.
+
+**No setup needed:**
+
+- No OBS installation
+- No external scripts
+- Works out of the box
+
 ---
 
-### Adding Timestamp Overlay (CCTV-style) (deprecated before v1.3.0)
+### 🔄 Migration Notes
 
-You can overlay a real-time date and time on your webcam feed using **OBS Studio** with a Lua script — simulating a professional CCTV timestamp.
+If you were using OBS before:
 
-**Step-by-step setup:**
+- Remove OBS from your workflow
+- Delete any overlay configuration
+- Update to version **v1.3.0 or later**
 
-1. Go to the [OBS DateTime Lua Script page](https://obsproject.com/forum/threads/datetime-digital-clock.113883/) and click the grey **"Go to download"** button at the top right.
-2. Save the `datetime.lua` file to a memorable location on your computer.
+---
+
+<details>
+<summary>📦 Legacy Method (Before v1.3.0 — Using OBS)</summary>
+
+Previously, timestamp overlay required **OBS Studio** with a Lua script to simulate a CCTV-style timestamp.
+
+### Step-by-step setup:
+
+1. Go to the [OBS DateTime Lua Script page](https://obsproject.com/forum/threads/datetime-digital-clock.113883/) and click the **"Go to download"** button.
+2. Save the `datetime.lua` file.
 3. Open **OBS Studio**.
-4. In the **Sources** panel, right-click and add a new **Text (FreeType 2)** source. Name it something unique (e.g., `clock1`). You don't need to fill it in — the script will handle it.
-5. Go to **Tools → Scripts** in the menu bar.
-6. Click the **"+"** button and navigate to your saved `datetime.lua` file, then click **Open**.
-7. Select the script in the **Loaded Scripts** list. A description panel will appear on the right.
-8. Set the **Datetime format** field to your preferred format, e.g.:
-    ```
-    %Y-%m-%dT%H:%M:%S%z
-    ```
-    _(produces output like: `2024-06-11T01:28:13+00:00`)_
-9. Set the **Text Source** field to exactly match the name you gave your text source (e.g., `clock1`).
-10. Click **Close** on the Scripts window.
-11. The text source will now auto-update with the current time. Right-click it → **Properties** to customize font, size, and color.
-12. Enable **OBS Virtual Camera** (Tools → Start Virtual Camera) and select it as your camera input in resi-cam.
+4. Add a **Text (FreeType 2)** source (e.g., `clock1`).
+5. Open **Tools → Scripts**.
+6. Click **"+"** and load `datetime.lua`.
+7. Select the script and configure:
+   **Datetime format:** %Y-%m-%dT%H:%M:%S%z
+8. Set **Text Source** to your created source (e.g., `clock1`).
+9. Customize font/style via source properties.
+10. Start **OBS Virtual Camera**.
+11. Select it as input in resi-cam.
 
----
-
+</details>
 ### Configuration
 
 App version and global settings are managed in:
@@ -721,32 +745,57 @@ bun dev
 
 Aplikasi akan tersedia di [http://localhost:3000](http://localhost:3000).
 
+## Menambahkan Overlay Tanggal & Waktu (Gaya CCTV)
+
+> ⚠️ **Deprecated sebelum versi 1.3.0**  
+> Mulai versi **1.3.0**, fitur overlay timestamp sudah tersedia secara bawaan di dalam aplikasi.  
+> **OBS tidak lagi diperlukan.**
+
+### ✅ Cara Baru (v1.3.0+)
+
+Overlay tanggal & waktu sekarang otomatis ditambahkan saat proses perekaman.
+
+**Tidak perlu konfigurasi tambahan:**
+
+- Tanpa OBS
+- Tanpa script eksternal
+- Langsung aktif secara default
+
 ---
 
-### Menambahkan Overlay Tanggal & Waktu (Gaya CCTV) (deprecated sebelum versi 1.3.0)
+### 🔄 Catatan Migrasi
+
+Jika sebelumnya Anda menggunakan OBS:
+
+- Hapus OBS dari workflow Anda
+- Hapus konfigurasi overlay yang lama
+- Pastikan menggunakan versi **v1.3.0 atau lebih baru**
+
+---
+
+<details>
+<summary>📦 Metode Lama (Sebelum v1.3.0 — Menggunakan OBS)</summary>
 
 Anda dapat menambahkan overlay tanggal dan waktu secara real-time pada tampilan webcam menggunakan **OBS Studio** dengan skrip Lua — menyimulasikan tampilan timestamp profesional seperti CCTV.
 
-**Langkah-langkah setup:**
+### Langkah-langkah setup:
 
-1. Kunjungi [halaman OBS DateTime Lua Script](https://obsproject.com/forum/threads/datetime-digital-clock.113883/) dan klik tombol abu-abu **"Go to download"** di sudut kanan atas.
+1. Kunjungi [halaman OBS DateTime Lua Script](https://obsproject.com/forum/threads/datetime-digital-clock.113883/) dan klik tombol **"Go to download"** di sudut kanan atas.
 2. Simpan file `datetime.lua` ke lokasi yang mudah diingat di komputer Anda.
 3. Buka **OBS Studio**.
-4. Di panel **Sources**, klik kanan dan tambahkan sumber baru berupa **Text (FreeType 2)**. Beri nama yang unik (contoh: `clock1`). Tidak perlu mengisi kontennya — skrip yang akan menanganinya.
-5. Pergi ke menu **Tools → Scripts**.
-6. Klik tombol **"+"** dan arahkan ke file `datetime.lua` yang sudah Anda simpan, lalu klik **Open**.
-7. Pilih skrip di daftar **Loaded Scripts**. Panel deskripsi akan muncul di sebelah kanan.
-8. Atur kolom **Datetime format** sesuai preferensi Anda, contoh:
-    ```
-    %Y-%m-%dT%H:%M:%S%z
-    ```
-    _(menghasilkan output seperti: `2024-06-11T01:28:13+00:00`)_
-9. Atur kolom **Text Source** agar sama persis dengan nama sumber teks yang Anda buat (contoh: `clock1`).
-10. Klik **Close** pada jendela Scripts.
-11. Sumber teks kini akan otomatis diperbarui dengan waktu saat ini. Klik kanan sumber → **Properties** untuk mengatur font, ukuran, dan warna.
-12. Aktifkan **OBS Virtual Camera** (Tools → Start Virtual Camera) dan pilih sebagai input kamera di resi-cam.
+4. Di panel **Sources**, klik kanan dan tambahkan sumber baru berupa **Text (FreeType 2)**. Beri nama unik (misalnya: `clock1`). Tidak perlu mengisi kontennya — skrip akan menanganinya.
+5. Masuk ke menu **Tools → Scripts**.
+6. Klik tombol **"+"**, lalu pilih file `datetime.lua` yang sudah diunduh.
+7. Pilih skrip di daftar **Loaded Scripts**.
+8. Atur **Datetime format**, contoh:
+   %Y-%m-%dT%H:%M:%S%z
+   _(contoh output: `2024-06-11T01:28:13+00:00`)_
+9. Atur **Text Source** sesuai nama sumber teks (misalnya: `clock1`).
+10. Klik **Close**.
+11. Sumber teks akan otomatis menampilkan waktu real-time. Anda bisa mengatur font, ukuran, dan warna melalui **Properties**.
+12. Aktifkan **OBS Virtual Camera** (Tools → Start Virtual Camera), lalu pilih sebagai input kamera di resi-cam.
 
----
+</details>
 
 ### Konfigurasi
 
