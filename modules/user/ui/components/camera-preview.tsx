@@ -360,7 +360,7 @@ export default function CameraPreview({
             hasStartedRecordingRef.current = false;
             stopStream();
         };
-    }, [camera, setSystemLogs]); // ← owner notes:  PLEASE DO NOT ADD startCanvasOverlay to this dependency!! it will make bugs, just ignore the ts warning
+    }, [camera, setSystemLogs]); // ← owner notes:  PLEASE DO NOT ADD startCanvasOverlay to this dependency!! it will make bugs, just ignore the ts warning (using canvas will doing rerender every fps!)
 
     useEffect(() => {
         function startRecording() {
