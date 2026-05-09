@@ -221,6 +221,10 @@ export default function CameraPreview({
                 if (cancelled) return;
                 const name = (err as DOMException).name;
                 setErrorMsg(ERROR_MESSAGES[name] ?? `Failed to access camera: ${(err as Error).message}`);
+                setSystemLogs(prev => [
+                    ...prev,
+                    { status: "error", message: `Camera ${camera.name} already in used by another application` },
+                ]);
                 setStatus("error");
             }
         }
