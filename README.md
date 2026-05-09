@@ -19,7 +19,15 @@
 
 ---
 
-## 🇬🇧 English
+### WHAT'S NEW IN V1.3.0
+
+- fixed symlink error in config.ts for finalPath
+- camera overlay style in preview + record using canvas tag in HTML5!
+- enchance preview to fit the video
+
+---
+
+## en English
 
 ### Table of Contents
 
@@ -53,7 +61,7 @@
 - 🎨 **Modern UI** with Radix UI, shadcn/ui, Tailwind CSS v4
 - 📱 **Responsive design** with dark/light mode
 - 🔄 **Real-time updates** with tRPC + React Query
-- 🕐 **CCTV-style timestamp overlay** via OBS Virtual Camera
+- 🕐 **CCTV-style timestamp overlay** <--- new update in version 1.3.0
 
 ---
 
@@ -254,7 +262,7 @@ The application will be available at [http://localhost:3000](http://localhost:30
 
 ---
 
-### Adding Timestamp Overlay (CCTV-style)
+### Adding Timestamp Overlay (CCTV-style) (deprecated before v1.3.0)
 
 You can overlay a real-time date and time on your webcam feed using **OBS Studio** with a Lua script — simulating a professional CCTV timestamp.
 
@@ -513,7 +521,7 @@ Get a glimpse of what resi-cam looks like in action:
 - 🎨 **UI Modern** dengan Radix UI, shadcn/ui, Tailwind CSS v4
 - 📱 **Desain responsif** dengan mode gelap/terang
 - 🔄 **Pembaruan real-time** dengan tRPC + React Query
-- 🕐 **Overlay timestamp gaya CCTV** via OBS Virtual Camera
+- 🕐 **Overlay timestamp gaya CCTV** <--- update baru versi 1.3.0
 
 ---
 
@@ -714,7 +722,7 @@ Aplikasi akan tersedia di [http://localhost:3000](http://localhost:3000).
 
 ---
 
-### Menambahkan Overlay Tanggal & Waktu (Gaya CCTV)
+### Menambahkan Overlay Tanggal & Waktu (Gaya CCTV) (deprecated sebelum versi 1.3.0)
 
 Anda dapat menambahkan overlay tanggal dan waktu secara real-time pada tampilan webcam menggunakan **OBS Studio** dengan skrip Lua — menyimulasikan tampilan timestamp profesional seperti CCTV.
 

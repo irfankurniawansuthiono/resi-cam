@@ -19,8 +19,8 @@ export default function PreviewVideoPack({ videoSource, barcodeResi }: { videoSo
                 </DialogHeader>
 
                 <div className="w-full bg-black">
-                    <video className="w-full aspect-video object-cover" controls autoPlay={false}>
-                        <source src={videoSource} type="video/mp4" />
+                    <video className="w-full aspect-video object-contain" controls autoPlay={false}>
+                        <source key={videoSource} src={videoSource} type="video/mp4" />
                         Your browser does not support the video tag.
                     </video>
                 </div>

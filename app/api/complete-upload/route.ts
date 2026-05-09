@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Missing sessionId or barcode" }, { status: 400 });
         }
 
-        const baseDir = path.join(process.cwd(), "uploads", "chunks", sessionId);
+        const baseDir = path.join(process.cwd(), finalPath, "chunks", sessionId);
 
         // ✅ Folder tidak ada = rekaman terlalu pendek, belum sempat upload chunk
         if (!fs.existsSync(baseDir)) {

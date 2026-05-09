@@ -38,12 +38,105 @@ export default function CameraPreview({
     const streamRef = useRef<MediaStream | null>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const animFrameRef = useRef<number>(0);
+    const canvasStreamRef = useRef<MediaStream | null>(null);
     const [status, setStatus] = useState<CameraStatus>("idle");
+    const barcodeRef = useRef(barcode);
+    const canvasReadyRef = useRef(false);
     const [previewUrl, setPreviewUrl] = useState("");
     const hasStartedRecordingRef = useRef(false);
     const queryClient = useQueryClient();
     const [errorMsg, setErrorMsg] = useState("");
     const trpc = useTRPC();
+    useEffect(() => {
+        barcodeRef.current = barcode;
+    }, [barcode]);
+    function startCanvasOverlay() {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        if (!video || !canvas) return;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        // ✅ Tunggu sampai videoWidth benar-benar ada
+        const width = video.videoWidth;
+        const height = video.videoHeight;
+        if (!width || !height) {
+            // Retry setelah frame berikutnya
+            requestAnimationFrame(() => startCanvasOverlay());
+            return;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        // Canvas stream untuk MediaRecorder
+        const canvasStream = canvas.captureStream(60);
+        canvasStreamRef.current = canvasStream;
+        canvasReadyRef.current = true; // ✅ tandai canvas sudah siap
+        function drawFrame() {
+            if (!ctx || !video || !canvas) return;
+            // Clear canvas dulu dengan warna hitam
+            ctx.fillStyle = "#000000";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const drawWidth = Math.min(canvas.width, video.videoWidth);
+            const drawHeight = Math.min(canvas.height, video.videoHeight);
+            const drawX = (canvas.width - drawWidth) / 2;
+            const drawY = (canvas.height - drawHeight) / 2;
+            ctx.drawImage(video, drawX, drawY, drawWidth, drawHeight);
+
+            const now = new Date();
+            const timestamp = now.toLocaleString("id-ID", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false,
+            });
+
+            const padding = 8;
+            const fontSize = Math.max(16, canvas.width * 0.018);
+            ctx.font = `bold ${fontSize}px monospace`;
+
+            const textWidth = ctx.measureText(timestamp).width;
+
+            const bgX = 12;
+            const bgY = canvas.height - (fontSize + padding * 2) - 12;
+            // Background
+            ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+            ctx.beginPath();
+            ctx.roundRect(bgX, bgY, textWidth + padding * 2, fontSize + padding * 2, 4);
+            ctx.fill();
+
+            // Teks — baseline sejajar dengan background
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(timestamp, bgX + padding, bgY + fontSize + padding - 2);
+
+            // Barcode
+            const currentBarcode = barcodeRef.current || "please scan barcode first";
+            if (currentBarcode) {
+                const barcodeText = `📦 ${currentBarcode}`;
+                const bw = ctx.measureText(barcodeText).width;
+
+                const bBgX = canvas.width - bw - padding * 2 - 12;
+                const bBgY = canvas.height - fontSize - padding * 2 - 12;
+
+                ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+                ctx.beginPath();
+                ctx.roundRect(bBgX, bBgY, bw + padding * 2, fontSize + padding * 2, 4);
+                ctx.fill();
+
+                ctx.fillStyle = "#facc15";
+                ctx.fillText(barcodeText, bBgX + padding, bBgY + fontSize + padding - 2);
+            }
+
+            animFrameRef.current = requestAnimationFrame(drawFrame);
+        }
+
+        drawFrame();
+    }
 
     const createRecordingMutation = useMutation(
         trpc.record.create.mutationOptions({
@@ -89,8 +182,19 @@ export default function CameraPreview({
                     uploadingRef.current = false;
                 }
 
-                if (!streamRef.current) return;
-                const recorder = new MediaRecorder(streamRef.current, {
+                // ✅ Guard — kalau canvas stream belum ada, jangan lanjut
+                if (!canvasStreamRef.current) {
+                    setSystemLogs(prev => [...prev, { message: "Canvas stream not ready", status: "error" }]);
+                    hasStartedRecordingRef.current = false;
+                    return;
+                }
+
+                // ✅ Tambah audio track dari stream asli jika ada
+                const audioTracks = streamRef.current?.getAudioTracks() ?? [];
+                audioTracks.forEach(track => canvasStreamRef.current!.addTrack(track));
+
+                // Buat MediaRecorder
+                const recorder = new MediaRecorder(canvasStreamRef.current!, {
                     mimeType: "video/webm; codecs=vp8",
                 });
 
@@ -154,6 +258,12 @@ export default function CameraPreview({
         streamRef.current?.getTracks().forEach(t => t.stop());
         streamRef.current = null;
         if (videoRef.current) videoRef.current.srcObject = null;
+        cancelAnimationFrame(animFrameRef.current);
+        canvasStreamRef.current?.getTracks().forEach(t => t.stop());
+        canvasStreamRef.current = null;
+        // streamRef.current?.getTracks().forEach(t => t.stop());
+        streamRef.current = null;
+        if (videoRef.current) videoRef.current.srcObject = null;
     }
 
     const uploadChunk = useCallback(
@@ -214,6 +324,15 @@ export default function CameraPreview({
                     streamRef.current = stream;
                     if (videoRef.current) videoRef.current.srcObject = stream;
                     setStatus("active");
+
+                    // Tunggu video metadata loaded dulu
+                    videoRef.current!.onloadedmetadata = () => {
+                        startCanvasOverlay();
+                    };
+                    // Kalau sudah ready, langsung
+                    if (videoRef.current!.readyState >= 2) {
+                        startCanvasOverlay();
+                    }
                     setSystemLogs(prev => [...prev, { status: "info", message: `Camera ${camera.name} started` }]);
                     return;
                 }
@@ -231,6 +350,7 @@ export default function CameraPreview({
 
         startCamera();
         return () => {
+            canvasReadyRef.current = false;
             cancelled = true;
             // Stop recorder di cleanup juga
             if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
@@ -250,6 +370,10 @@ export default function CameraPreview({
                 appToast.error("Barcode is required");
                 return;
             }
+            if (!canvasReadyRef.current || !canvasStreamRef.current) {
+                appToast.error("Camera not ready yet, please wait...");
+                return;
+            }
 
             hasStartedRecordingRef.current = true;
 
@@ -258,7 +382,9 @@ export default function CameraPreview({
                 { status: "process", message: `Starting recording...\n${barcode}, with camera\n${camera.name}` },
             ]);
 
-            if (!streamRef.current) return;
+            mediaRecorderRef.current = new MediaRecorder(canvasStreamRef.current, {
+                mimeType: "video/webm; codecs=vp9",
+            });
 
             if (camera.url.startsWith("webcam")) {
                 createWCSMutation.mutate({
@@ -309,7 +435,14 @@ export default function CameraPreview({
                     ref={videoRef}
                     autoPlay
                     playsInline
-                    className={`absolute inset-0  w-full h-full object-cover ${status === "active" ? "block" : "hidden"}`}
+                    muted
+                    className="hidden" // ← hide preview canvas
+                />
+
+                {/* Canvas - ini yang ditampilkan ke user */}
+                <canvas
+                    ref={canvasRef}
+                    className={`absolute inset-0 w-full h-full object-contain ${status === "active" ? "block" : "hidden"}`}
                 />
 
                 {/* Fallback */}

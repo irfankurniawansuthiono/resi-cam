@@ -12,11 +12,7 @@ export const webCameraSessionRouter = createTRPCRouter({
                         deviceId: input.id,
                         name: input.name,
                         url: input.url,
-                        user: {
-                            connect: {
-                                id: ctx.session.user.id,
-                            },
-                        },
+                        userId: ctx.session.user.id,
                     },
                 });
 

@@ -1,4 +1,4 @@
-import { logStatus, SourceType, Status } from "@/app/generated/prisma";
+import { LogStatus, SourceType, Status } from "@/app/generated/prisma";
 import { roleList } from "@/modules/admin/ui/config/auth/role.user";
 import { z } from "zod";
 
@@ -131,7 +131,7 @@ export const addRecordSchema = z.object({
 });
 
 export const addLogsSchema = z.object({
-    status: z.enum(logStatus),
+    status: z.enum(LogStatus),
     message: z.string(),
     chunkId: z.string().optional(),
 });

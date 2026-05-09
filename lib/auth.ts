@@ -4,7 +4,7 @@ import { admin } from "better-auth/plugins";
 // import { Resend } from "resend";
 import config from "@/lib/config-env";
 import prisma from "@/lib/prisma";
-const isProduction = process.env.NODE_ENV === "production";
+const isHttps = process.env.NEXT_PUBLIC_URL?.startsWith("https://");
 // const resend = new Resend(config.env.resendApiKey);
 
 export const auth = betterAuth({
@@ -67,12 +67,12 @@ export const auth = betterAuth({
     // Advanced security options
     advanced: {
         // Use secure cookies in production
-        useSecureCookies: isProduction,
+        useSecureCookies: isHttps,
         // Default cookie attributes for XSS protection
         defaultCookieAttributes: {
             httpOnly: true,
             sameSite: "lax",
-            secure: isProduction,
+            secure: isHttps,
             path: "/",
         },
     },
