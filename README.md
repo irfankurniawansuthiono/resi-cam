@@ -59,21 +59,21 @@
 
 ### Tech Stack
 
-| Category | Technology |
-|---|---|
-| Framework | Next.js 16, React 19 |
-| Language | TypeScript 5.9 |
-| API Layer | tRPC v11 |
-| Database ORM | Prisma 7 |
-| Database | PostgreSQL |
-| Auth | Better Auth |
-| UI Components | Radix UI, shadcn/ui |
-| Styling | Tailwind CSS v4 |
-| File Upload | UploadThing |
-| Video Processing | FFmpeg |
-| State Management | TanStack Query v5 |
-| Animation | GSAP |
-| Runtime | Node.js, Bun |
+| Category         | Technology           |
+| ---------------- | -------------------- |
+| Framework        | Next.js 16, React 19 |
+| Language         | TypeScript 5.9       |
+| API Layer        | tRPC v11             |
+| Database ORM     | Prisma 7             |
+| Database         | PostgreSQL           |
+| Auth             | Better Auth          |
+| UI Components    | Radix UI, shadcn/ui  |
+| Styling          | Tailwind CSS v4      |
+| File Upload      | UploadThing          |
+| Video Processing | FFmpeg               |
+| State Management | TanStack Query v5    |
+| Animation        | GSAP                 |
+| Runtime          | Node.js, Bun         |
 
 ---
 
@@ -81,12 +81,12 @@
 
 Make sure the following are installed on your system before proceeding:
 
-| Dependency | Version | Installation |
-|---|---|---|
-| [Node.js](https://nodejs.org) | ≥ 18.x | [nodejs.org](https://nodejs.org) |
-| [Bun](https://bun.sh) | Latest | `curl -fsSL https://bun.sh/install \| bash` |
-| [FFmpeg](https://ffmpeg.org) | Latest | See guide below ⬇️ |
-| [PostgreSQL](https://www.postgresql.org) | ≥ 14 | [postgresql.org](https://www.postgresql.org) |
+| Dependency                               | Version | Installation                                 |
+| ---------------------------------------- | ------- | -------------------------------------------- |
+| [Node.js](https://nodejs.org)            | ≥ 18.x  | [nodejs.org](https://nodejs.org)             |
+| [Bun](https://bun.sh)                    | Latest  | `curl -fsSL https://bun.sh/install \| bash`  |
+| [FFmpeg](https://ffmpeg.org)             | Latest  | See guide below ⬇️                           |
+| [PostgreSQL](https://www.postgresql.org) | ≥ 14    | [postgresql.org](https://www.postgresql.org) |
 
 ---
 
@@ -178,7 +178,7 @@ ffmpeg version 7.x.x Copyright (c) 2000-2024 the FFmpeg developers
 **1. Clone the repository**
 
 ```bash
-git clone https://github.com/your-username/resi-cam.git
+git clone https://github.com/irfankurniawansuthiono/resi-cam.git
 cd resi-cam
 ```
 
@@ -268,10 +268,10 @@ You can overlay a real-time date and time on your webcam feed using **OBS Studio
 6. Click the **"+"** button and navigate to your saved `datetime.lua` file, then click **Open**.
 7. Select the script in the **Loaded Scripts** list. A description panel will appear on the right.
 8. Set the **Datetime format** field to your preferred format, e.g.:
-   ```
-   %Y-%m-%dT%H:%M:%S%z
-   ```
-   *(produces output like: `2024-06-11T01:28:13+00:00`)*
+    ```
+    %Y-%m-%dT%H:%M:%S%z
+    ```
+    _(produces output like: `2024-06-11T01:28:13+00:00`)_
 9. Set the **Text Source** field to exactly match the name you gave your text source (e.g., `clock1`).
 10. Click **Close** on the Scripts window.
 11. The text source will now auto-update with the current time. Right-click it → **Properties** to customize font, size, and color.
@@ -332,13 +332,13 @@ git checkout -b feat/your-feature-name
 
 **Branch naming conventions:**
 
-| Prefix | Use case |
-|---|---|
-| `feat/` | New feature |
-| `fix/` | Bug fix |
-| `docs/` | Documentation update |
-| `refactor/` | Code refactoring |
-| `chore/` | Maintenance tasks |
+| Prefix      | Use case             |
+| ----------- | -------------------- |
+| `feat/`     | New feature          |
+| `fix/`      | Bug fix              |
+| `docs/`     | Documentation update |
+| `refactor/` | Code refactoring     |
+| `chore/`    | Maintenance tasks    |
 
 #### Step 5 — Make Your Changes
 
@@ -372,9 +372,9 @@ git push origin feat/your-feature-name
 2. You will see a banner saying **"Compare & pull request"** — click it.
 3. Set the base repository to the original `resi-cam` repo and base branch to `main`.
 4. Fill in the PR template:
-   - **Title:** A clear, concise title (e.g., `feat: add FFmpeg progress bar`)
-   - **Description:** Explain *what* you changed and *why*
-   - **Screenshots/recordings:** If applicable, attach visuals
+    - **Title:** A clear, concise title (e.g., `feat: add FFmpeg progress bar`)
+    - **Description:** Explain _what_ you changed and _why_
+    - **Screenshots/recordings:** If applicable, attach visuals
 5. Click **"Create pull request"**.
 
 #### Step 8 — Respond to Review
@@ -401,8 +401,8 @@ git push origin main
 Thanks to all the amazing people who have contributed to this project! 🙌
 
 <!-- ALL-CONTRIBUTORS-LIST:START -->
-<a href="https://github.com/your-username/resi-cam/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=your-username/resi-cam" alt="Contributors"/>
+<a href="https://github.com/irfankurniawansuthiono/resi-cam/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=irfankurniawansuthiono/resi-cam" alt="Contributors"/>
 </a>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
@@ -438,10 +438,10 @@ This project was **bootstrapped from** the open-source starter kit by **Candra W
 
 Development of this project was assisted by the following AI tools:
 
-| AI | Role | Link |
-|---|---|---|
-| **Claude** by Anthropic | Code review, documentation writing, architecture guidance | [claude.ai](https://claude.ai) |
-| **ChatGPT** by OpenAI | Debugging assistance, feature ideation, code generation | [chatgpt.com](https://chatgpt.com) |
+| AI                      | Role                                                      | Link                               |
+| ----------------------- | --------------------------------------------------------- | ---------------------------------- |
+| **Claude** by Anthropic | Code review, documentation writing, architecture guidance | [claude.ai](https://claude.ai)     |
+| **ChatGPT** by OpenAI   | Debugging assistance, feature ideation, code generation   | [chatgpt.com](https://chatgpt.com) |
 
 > These AI assistants helped accelerate development, but all final decisions, code review, and architecture choices were made by the human developer.
 
@@ -456,6 +456,7 @@ Made with ❤️ by the resi-cam community
 </div>
 
 ---
+
 ---
 
 ## 🇮🇩 Bahasa Indonesia
@@ -502,21 +503,21 @@ Made with ❤️ by the resi-cam community
 
 ### Teknologi yang Digunakan
 
-| Kategori | Teknologi |
-|---|---|
-| Framework | Next.js 16, React 19 |
-| Bahasa | TypeScript 5.9 |
-| Lapisan API | tRPC v11 |
-| ORM Database | Prisma 7 |
-| Database | PostgreSQL |
-| Autentikasi | Better Auth |
-| Komponen UI | Radix UI, shadcn/ui |
-| Styling | Tailwind CSS v4 |
-| Upload File | UploadThing |
-| Pemrosesan Video | FFmpeg |
-| Manajemen State | TanStack Query v5 |
-| Animasi | GSAP |
-| Runtime | Node.js, Bun |
+| Kategori         | Teknologi            |
+| ---------------- | -------------------- |
+| Framework        | Next.js 16, React 19 |
+| Bahasa           | TypeScript 5.9       |
+| Lapisan API      | tRPC v11             |
+| ORM Database     | Prisma 7             |
+| Database         | PostgreSQL           |
+| Autentikasi      | Better Auth          |
+| Komponen UI      | Radix UI, shadcn/ui  |
+| Styling          | Tailwind CSS v4      |
+| Upload File      | UploadThing          |
+| Pemrosesan Video | FFmpeg               |
+| Manajemen State  | TanStack Query v5    |
+| Animasi          | GSAP                 |
+| Runtime          | Node.js, Bun         |
 
 ---
 
@@ -524,12 +525,12 @@ Made with ❤️ by the resi-cam community
 
 Pastikan semua dependensi berikut sudah terpasang di sistem Anda sebelum melanjutkan:
 
-| Dependensi | Versi | Instalasi |
-|---|---|---|
-| [Node.js](https://nodejs.org) | ≥ 18.x | [nodejs.org](https://nodejs.org) |
-| [Bun](https://bun.sh) | Terbaru | `curl -fsSL https://bun.sh/install \| bash` |
-| [FFmpeg](https://ffmpeg.org) | Terbaru | Lihat panduan di bawah ⬇️ |
-| [PostgreSQL](https://www.postgresql.org) | ≥ 14 | [postgresql.org](https://www.postgresql.org) |
+| Dependensi                               | Versi   | Instalasi                                    |
+| ---------------------------------------- | ------- | -------------------------------------------- |
+| [Node.js](https://nodejs.org)            | ≥ 18.x  | [nodejs.org](https://nodejs.org)             |
+| [Bun](https://bun.sh)                    | Terbaru | `curl -fsSL https://bun.sh/install \| bash`  |
+| [FFmpeg](https://ffmpeg.org)             | Terbaru | Lihat panduan di bawah ⬇️                    |
+| [PostgreSQL](https://www.postgresql.org) | ≥ 14    | [postgresql.org](https://www.postgresql.org) |
 
 ---
 
@@ -621,7 +622,7 @@ ffmpeg version 7.x.x Copyright (c) 2000-2024 the FFmpeg developers
 **1. Clone repositori**
 
 ```bash
-git clone https://github.com/your-username/resi-cam.git
+git clone https://github.com/irfankurniawansuthiono/resi-cam.git
 cd resi-cam
 ```
 
@@ -711,10 +712,10 @@ Anda dapat menambahkan overlay tanggal dan waktu secara real-time pada tampilan 
 6. Klik tombol **"+"** dan arahkan ke file `datetime.lua` yang sudah Anda simpan, lalu klik **Open**.
 7. Pilih skrip di daftar **Loaded Scripts**. Panel deskripsi akan muncul di sebelah kanan.
 8. Atur kolom **Datetime format** sesuai preferensi Anda, contoh:
-   ```
-   %Y-%m-%dT%H:%M:%S%z
-   ```
-   *(menghasilkan output seperti: `2024-06-11T01:28:13+00:00`)*
+    ```
+    %Y-%m-%dT%H:%M:%S%z
+    ```
+    _(menghasilkan output seperti: `2024-06-11T01:28:13+00:00`)_
 9. Atur kolom **Text Source** agar sama persis dengan nama sumber teks yang Anda buat (contoh: `clock1`).
 10. Klik **Close** pada jendela Scripts.
 11. Sumber teks kini akan otomatis diperbarui dengan waktu saat ini. Klik kanan sumber → **Properties** untuk mengatur font, ukuran, dan warna.
@@ -775,13 +776,13 @@ git checkout -b feat/nama-fitur-anda
 
 **Konvensi penamaan branch:**
 
-| Prefix | Kegunaan |
-|---|---|
-| `feat/` | Fitur baru |
-| `fix/` | Perbaikan bug |
-| `docs/` | Pembaruan dokumentasi |
-| `refactor/` | Refactoring kode |
-| `chore/` | Tugas pemeliharaan |
+| Prefix      | Kegunaan              |
+| ----------- | --------------------- |
+| `feat/`     | Fitur baru            |
+| `fix/`      | Perbaikan bug         |
+| `docs/`     | Pembaruan dokumentasi |
+| `refactor/` | Refactoring kode      |
+| `chore/`    | Tugas pemeliharaan    |
 
 #### Langkah 5 — Buat Perubahan Anda
 
@@ -815,9 +816,9 @@ git push origin feat/nama-fitur-anda
 2. Anda akan melihat banner **"Compare & pull request"** — klik banner tersebut.
 3. Atur base repository ke repo `resi-cam` asli dan base branch ke `main`.
 4. Isi template PR:
-   - **Judul:** Judul yang jelas dan ringkas (contoh: `feat: tambahkan progress bar FFmpeg`)
-   - **Deskripsi:** Jelaskan *apa* yang Anda ubah dan *mengapa*
-   - **Screenshot/rekaman:** Lampirkan visual jika diperlukan
+    - **Judul:** Judul yang jelas dan ringkas (contoh: `feat: tambahkan progress bar FFmpeg`)
+    - **Deskripsi:** Jelaskan _apa_ yang Anda ubah dan _mengapa_
+    - **Screenshot/rekaman:** Lampirkan visual jika diperlukan
 5. Klik **"Create pull request"**.
 
 #### Langkah 8 — Tanggapi Review
@@ -844,8 +845,8 @@ git push origin main
 Terima kasih kepada semua orang luar biasa yang telah berkontribusi pada proyek ini! 🙌
 
 <!-- ALL-CONTRIBUTORS-LIST:START -->
-<a href="https://github.com/your-username/resi-cam/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=your-username/resi-cam" alt="Kontributor"/>
+<a href="https://github.com/irfankurniawansuthiono/resi-cam/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=irfankurniawansuthiono/resi-cam" alt="Kontributor"/>
 </a>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
@@ -881,10 +882,10 @@ Proyek ini **dibangun di atas** starter kit open-source karya **Candra Wali Sanj
 
 Pengembangan proyek ini dibantu oleh AI tools berikut:
 
-| AI | Peran | Tautan |
-|---|---|---|
-| **Claude** oleh Anthropic | Review kode, penulisan dokumentasi, panduan arsitektur | [claude.ai](https://claude.ai) |
-| **ChatGPT** oleh OpenAI | Bantuan debugging, ideasi fitur, generasi kode | [chatgpt.com](https://chatgpt.com) |
+| AI                        | Peran                                                  | Tautan                             |
+| ------------------------- | ------------------------------------------------------ | ---------------------------------- |
+| **Claude** oleh Anthropic | Review kode, penulisan dokumentasi, panduan arsitektur | [claude.ai](https://claude.ai)     |
+| **ChatGPT** oleh OpenAI   | Bantuan debugging, ideasi fitur, generasi kode         | [chatgpt.com](https://chatgpt.com) |
 
 > AI-AI ini membantu mempercepat pengembangan, namun semua keputusan akhir, review kode, dan pilihan arsitektur tetap dibuat oleh developer manusia.
 
