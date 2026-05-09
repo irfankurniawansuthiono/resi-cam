@@ -41,17 +41,21 @@ export default function CameraPreview({
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const animFrameRef = useRef<number>(0);
     const canvasStreamRef = useRef<MediaStream | null>(null);
-    const [status, setStatus] = useState<CameraStatus>("idle");
     const barcodeRef = useRef(barcode);
     const canvasReadyRef = useRef(false);
-    const [previewUrl, setPreviewUrl] = useState("");
     const hasStartedRecordingRef = useRef(false);
+    const uploadingRef = useRef(false);
+
     const queryClient = useQueryClient();
-    const [errorMsg, setErrorMsg] = useState("");
     const trpc = useTRPC();
+
+    const [status, setStatus] = useState<CameraStatus>("idle");
+    const [previewUrl, setPreviewUrl] = useState("");
+    const [errorMsg, setErrorMsg] = useState("");
     useEffect(() => {
         barcodeRef.current = barcode;
     }, [barcode]);
+
     function startCanvasOverlay() {
         const video = videoRef.current;
         const canvas = canvasRef.current;
@@ -72,7 +76,7 @@ export default function CameraPreview({
         // Canvas stream untuk MediaRecorder
         const canvasStream = canvas.captureStream(60);
         canvasStreamRef.current = canvasStream;
-        canvasReadyRef.current = true; // ✅ tandai canvas sudah siap
+        canvasReadyRef.current = true; // canvas ready
         function drawFrame() {
             if (!ctx || !video || !canvas) return;
             // Clear canvas dulu dengan warna hitam
@@ -253,7 +257,7 @@ export default function CameraPreview({
             },
         }),
     );
-    const uploadingRef = useRef(false);
+
     function stopStream() {
         streamRef.current?.getTracks().forEach(t => t.stop());
         streamRef.current = null;
@@ -392,7 +396,6 @@ export default function CameraPreview({
                     name: camera.name,
                     url: camera.url,
                 });
-                // MediaRecorder sekarang diinit di onSuccess ↑
             }
         }
 

@@ -1,14 +1,13 @@
 <div align="center">
-
-<img src="./public/img/logo/resi-cam-transparent-logo.png" alt="resi-cam logo" width="180"/>
-
-<img src="https://img.shields.io/badge/version-1.3.0-blue?style=for-the-badge" alt="Version"/>
-<img src="https://img.shields.io/badge/Next.js-16.1.6-black?style=for-the-badge&logo=next.js" alt="Next.js"/>
-<img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react" alt="React"/>
-<img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript"/>
-<img src="https://img.shields.io/badge/Prisma-7.6-2D3748?style=for-the-badge&logo=prisma" alt="Prisma"/>
-<img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="License"/>
-
+<div align="center">
+  <img src="./public/img/logo/resi-cam-transparent-logo.png" alt="resi-cam logo" width="180"/>
+</div>
+  <img src="https://img.shields.io/badge/version-1.3.0-blue?style=for-the-badge" alt="Version"/>
+  <img src="https://img.shields.io/badge/Next.js-16.1.6-black?style=for-the-badge&logo=next.js" alt="Next.js"/>
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react" alt="React"/>
+  <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/Prisma-7.6-2D3748?style=for-the-badge&logo=prisma" alt="Prisma"/>
+  <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="License"/>
 # 📷 resi-cam
 
 **EN** | [ID](#bahasa-indonesia)
