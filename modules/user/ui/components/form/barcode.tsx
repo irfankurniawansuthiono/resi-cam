@@ -101,6 +101,11 @@ export default function BarcodeField({
                         control={form.control}
                         render={({ field }) => (
                             <Input
+                                onKeyDown={e => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                    }
+                                }}
                                 className="max-w-xs"
                                 {...field}
                                 type="text"
