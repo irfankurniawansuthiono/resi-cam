@@ -20,11 +20,9 @@
 
 ---
 
-### WHAT'S NEW IN V1.3.0
+### WHAT'S NEW IN V1.3.2
 
-- fixed symlink error in config.ts for finalPath
-- camera overlay style in preview + record using canvas tag in HTML5!
-- enchance preview to fit the video
+- refactor: update file upload and retrieval logic to use finalPath and support range requests
 
 ---
 

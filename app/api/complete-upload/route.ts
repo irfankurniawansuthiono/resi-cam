@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Missing sessionId or barcode" }, { status: 400 });
         }
 
-        const baseDir = path.join(process.cwd(), finalPath, "chunks", sessionId);
+        const baseDir = path.join(finalPath, "chunks", sessionId);
 
         // ✅ Folder tidak ada = rekaman terlalu pendek, belum sempat upload chunk
         if (!fs.existsSync(baseDir)) {
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
         const month = String(now.getMonth() + 1).padStart(2, "0");
         const day = String(now.getDate()).padStart(2, "0");
 
-        const finalDir = path.join(process.cwd(), finalPath, year, month, day);
+        const finalDir = path.join(finalPath, year, month, day);
         await mkdir(finalDir, { recursive: true });
 
         const outputPath = path.join(finalDir, `${barcode}.mp4`);

@@ -1,2 +1,2 @@
-export const finalPath = "/uploads";
-export const version = "1.3.0";
+export const finalPath = `${process.cwd()}/uploads`;
+export const version = "1.3.2";
