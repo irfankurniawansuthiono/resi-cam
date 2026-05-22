@@ -1,5 +1,6 @@
 // app/api/upload-chunk/route.ts
 
+import { finalPath } from "@/app/config/config";
 import { createLogs } from "@/lib/logs";
 import { mkdir, writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
         }
 
         // 📁 Folder tujuan
-        const uploadDir = path.join(process.cwd(), "uploads", "chunks", sessionId);
+        const uploadDir = path.join(finalPath, "chunks", sessionId);
 
         // Pastikan folder ada
         await mkdir(uploadDir, { recursive: true });
