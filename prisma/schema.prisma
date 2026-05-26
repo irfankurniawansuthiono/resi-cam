@@ -1,0 +1,170 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String?
+  email         String?  @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  accounts    Account[]
+  credentials Credential[]
+  sessions    Session[]
+
+  role              String?
+  banned            Boolean?           @default(false)
+  banReason         String?
+  banExpires        DateTime?
+  records           Record[]
+  cameras           Camera[]
+
+  @@map("user")
+}
+
+model Account {
+  id                String    @id @default(cuid())
+  userId            String
+  provider          String?   @default("credentials")
+  providerAccountId String?
+  accessToken       String?
+  refreshToken      String?
+  expiresAt         DateTime?
+  tokenType         String?
+  scope             String?
+  idToken           String?
+  sessionState      String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  accountId             String
+  providerId            String
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  password              String?
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("account")
+}
+
+model Credential {
+  id         String   @id @default(cuid())
+  userId     String
+  provider   String
+  providerId String
+  password   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerId])
+  @@map("credential")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token String
+
+  impersonatedBy String?
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+
+model Record {
+  id                 String     @id @default(cuid())
+  barcodeResi        String     @unique
+  videoPath          String
+  status             String  // "recording" | "processing" | "done" | "failed"
+  cameraId           String?
+  webCameraSessionId String?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  recordedById       String?
+  sourceType         String  // "CAMERA" | "WEBCAM"
+
+  recordedBy       User?             @relation(fields: [recordedById], references: [id])
+  camera           Camera?           @relation(fields: [cameraId], references: [id])
+  webCameraSession WebCameraSession? @relation(fields: [webCameraSessionId], references: [id])
+
+  @@index([barcodeResi])
+  @@map("record")
+}
+
+model Camera {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String   @unique // "Kamera Meja 1", "IP Cam Gudang"
+  url       String   @unique // null kalau webcam, rtsp://... atau http://... kalau IP cam atau webcam:user-id untuk webcam
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  records Record[]
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model WebCameraSession {
+  id String @id @default(cuid())
+
+  userId String
+
+  deviceId String?
+  name     String?
+  url      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  records Record[]
+}
+
+model logs {
+  id        String    @id @default(cuid())
+  status    String  // "done" | "failed"
+  message   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  chunkId   String?
+}
